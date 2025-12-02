@@ -1,9 +1,9 @@
 
 import $ from 'jquery'
-import { drawPlayer, goLeft, goRight, redrawPlayer, fall } from './element/player/player.ts'
-import { draw_soil, Soil } from './element/soil/soil.ts'
+import { drawPlayer, goLeft, goRight ,goUp , redrawPlayer, fall } from './element/player/player.ts'
+import { draw_soil, Soil} from './element/soil/soil.ts'
 import { draw_ring } from './element/ring/ring.ts'
-
+import {draw_ladder} from './element/ladder/ladder.ts'
 
 
 $('#app').html( `
@@ -11,6 +11,7 @@ $('#app').html( `
 
   </div>
 `);
+let inLadder ;
 
 function body_keydown( e ) {
 
@@ -20,6 +21,10 @@ function body_keydown( e ) {
             redrawPlayer();
             break;
         case 38:    // UP
+            if(inLadder){
+                goUp();
+                redrawPlayer();
+            }
             break;
         case 39:    // RIGHT
             goRight();
@@ -34,47 +39,83 @@ $( 'body' ).on( 'keydown', body_keydown );
 
 
 let stageDict = {
-    'stage-1': [
-        { left: 0, bottom: 0, right: 0 } as Soil,
-        { left: 50, bottom: 300 , right: 500 } as Soil,
-    ],
-    'stage-2': [
-        { left: 0, bottom: 0 , right: 100 } as Soil,
-        { left: 70, bottom: 200 , right: 100 } as Soil,
-    ]
+    'stage-1': {
+        'Soil': [
+            { left: 0, bottom: 0, width: 5000 } as Soil,
+            { left: 50, bottom: 300, width: 500 } as Soil,
+        ],
+        'Ladder': [
+            {left: 250, bottom: 50, height: 247} as Ladder
+        ]
+    }
 };
 
 
 let ring = draw_ring( $('#app')[0] );
-drawPlayer( ring );
-
-stageDict['stage-1'].forEach( function( item: Soil ) {
-    draw_soil( ring, item.left, item.bottom, item.right );
+stageDict['stage-1']['Soil'].forEach( function( item: Soil ) {
+    draw_soil( ring, item.left, item.bottom, item.width );
+} );
+stageDict['stage-1']['Ladder'].forEach( function( item: Ladder ) {
+    draw_ladder( ring, item.left, item.bottom, item.height );
 } );
 
-let playerFall = function() {
+drawPlayer( ring );
 
-    stageDict['stage-1'].forEach( function( item: Soil ){
-        let rightPlatform = item.right
-        let leftPlatform = item.left
-        let topPlatform = item.bottom + 50
-        let bottomPlayer = parseFloat(window.getComputedStyle($('#player')[0]).bottom) - 20;
+let moveladder = function(){
+    inLadder = false;
+    stageDict['stage-1']['Ladder'].forEach( function( item: Ladder ){
+        let leftLadder = item.left;
+        let rightLadder = item.left + 30;//width 30
+        let bottomLadder = item.bottom ;
+        let topLadder = item.height + item.bottom;
+        let bottomPlayer = parseFloat(window.getComputedStyle($('#player')[0]).bottom) ;
         let middlePlayer = (parseFloat(window.getComputedStyle($('#player')[0]).left) + parseFloat(window.getComputedStyle($('#player')[0]).width))/2;
-        console.log(topPlatform)
-        //console.debug( 'loop!' );
-        if (leftPlatform <= middlePlayer && rightPlatform <= middlePlayer && topPlatform >= bottomPlayer){
+        //console.debug("middlePlayer",middlePlayer)
+        //console.debug("leftLadder",leftLadder)
+        //console.debug("rightLadder",rightLadder)
+        //console.debug(parseFloat(window.getComputedStyle($('#ladder')[0]).left))
+        if (middlePlayer >= leftLadder && middlePlayer <= rightLadder && bottomPlayer >= bottomLadder && bottomPlayer <= topLadder){
+            inLadder = true;
 
-            //console.debug( );
-            stop(playerFall)
-            clearInterval(interval);
+        }
+   }
 
-        }else{
-        fall();
-        redrawPlayer();
-        };
+) }
+let playerFall = function() {
+    let falling = true;
+    stageDict['stage-1']['Soil'].forEach( function( item: Soil ){
+        let leftPlatform = item.left;
+        let rightPlatform = item.width + item.left;
+        let topPlatform = item.bottom + 50;
+        let bottomPlayer = parseFloat(window.getComputedStyle($('#player')[0]).bottom) ;
+        let middlePlayer = (parseFloat(window.getComputedStyle($('#player')[0]).left) + parseFloat(window.getComputedStyle($('#player')[0]).width))/2;
+
+        if (leftPlatform <= middlePlayer && rightPlatform >= middlePlayer && topPlatform >= (bottomPlayer - 5) && topPlatform <= (bottomPlayer + 5)){
+
+            // falling on soil
+            falling = false;
+            //console.debug(rightPlatform);
+            //console.debug(middlePlayer);
+        } else if (inLadder){
+            falling = false;
+        }
+
+
+
     });
 
+    if (falling){
+        fall();
+        redrawPlayer();
+    }
+
 };
+function execute() {
+    moveladder();
+    playerFall();
 
-let interval = setInterval( playerFall , 100 );
+}
+let interval = setInterval( execute , 100 );
 
+
+//left of platform can go down, ruling 550 but visual 300

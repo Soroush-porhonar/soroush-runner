@@ -1,7 +1,7 @@
 import './soil.css'
 import $ from 'jquery'
 
-export function draw_soil( parent: HTMLDivElement, left: number, bottom: number ,right: number) {
+export function draw_soil( parent: HTMLDivElement, left: number, bottom: number ,width: number) {
     $( parent ).append(
         $( '<div></div>' )
             .attr( 'id', 'ground' )
@@ -9,7 +9,7 @@ export function draw_soil( parent: HTMLDivElement, left: number, bottom: number 
             .css( {
                 left: left,
                 bottom: bottom,
-                 right:  right
+                width:  width
             } )
     );
 }
@@ -17,5 +17,6 @@ export function draw_soil( parent: HTMLDivElement, left: number, bottom: number 
 export class Soil {
     left: number;
     bottom: number;
-    right: right;
+    width: number;
 }
+

@@ -58,4 +58,14 @@ export function fall() {
     if ( position.y + $( player ).outerHeight() > $( player ).parent().height() ) {
         position.y = $( player ).parent().height() - $( player ).outerHeight();
     }
+
+}
+
+export function goUp() {
+    position.y += 10;
+
+    //debugger;
+    if ( position.x + $( player ).outerWidth() > $( player ).parent().width() ) {
+        position.x = $( player ).parent().width() - $( player ).outerWidth();
+    }
 }
