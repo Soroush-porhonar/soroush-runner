@@ -1,4 +1,5 @@
-import './player.css'
+//import './player.css'
+import './Sprite-stand.css'
 import $ from 'jquery'
 
 class Position {
@@ -7,6 +8,8 @@ class Position {
 }
 
 const step: number = 10;
+const width: number = 16;
+const height: number = 32;
 let position: Position = new Position();
 let player: HTMLDivElement;
 
@@ -15,7 +18,7 @@ export function drawPlayer( parent: HTMLDivElement ): HTMLDivElement {
     position.y = 600;
     let $player = $( '<div></div>' )
         .attr( 'id', 'player' )
-        .addClass( 'character' )
+        .addClass( 'pixel-stand' )
         .css( {
          'left': position.x + 'px',
          'bottom': position.y + 'px'
@@ -24,6 +27,10 @@ export function drawPlayer( parent: HTMLDivElement ): HTMLDivElement {
 
     player = $player[0];
     return player;
+}
+
+export function returnPos(){
+    return {position , width,height }
 }
 
 export function redrawPlayer() {
@@ -63,6 +70,14 @@ export function fall() {
 
 export function goUp() {
     position.y += 10;
+
+    //debugger;
+    if ( position.x + $( player ).outerWidth() > $( player ).parent().width() ) {
+        position.x = $( player ).parent().width() - $( player ).outerWidth();
+    }
+}
+export function goDown() {
+    position.y -= 10;
 
     //debugger;
     if ( position.x + $( player ).outerWidth() > $( player ).parent().width() ) {

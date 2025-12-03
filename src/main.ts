@@ -1,6 +1,6 @@
 
 import $ from 'jquery'
-import { drawPlayer, goLeft, goRight ,goUp , redrawPlayer, fall } from './element/player/player.ts'
+import { drawPlayer, goLeft, goRight ,goUp ,goDown, redrawPlayer, fall , returnPos} from './element/player/player.ts'
 import { draw_soil, Soil} from './element/soil/soil.ts'
 import { draw_ring } from './element/ring/ring.ts'
 import {draw_ladder} from './element/ladder/ladder.ts'
@@ -11,7 +11,8 @@ $('#app').html( `
 
   </div>
 `);
-let inLadder ;
+let ascending
+let descending
 
 function body_keydown( e ) {
 
@@ -21,7 +22,7 @@ function body_keydown( e ) {
             redrawPlayer();
             break;
         case 38:    // UP
-            if(inLadder){
+            if(ascending){
                 goUp();
                 redrawPlayer();
             }
@@ -30,7 +31,11 @@ function body_keydown( e ) {
             goRight();
             redrawPlayer();
             break;
-        case 40:    // DOWN
+        case 40:// DOWN
+            if(descending){
+                goDown();
+                redrawPlayer();
+            }
             break;
     }
 }
@@ -45,7 +50,7 @@ let stageDict = {
             { left: 50, bottom: 300, width: 500 } as Soil,
         ],
         'Ladder': [
-            {left: 250, bottom: 50, height: 247} as Ladder
+            {left: 250, bottom: 40, height: 300} as Ladder
         ]
     }
 };
@@ -62,21 +67,26 @@ stageDict['stage-1']['Ladder'].forEach( function( item: Ladder ) {
 drawPlayer( ring );
 
 let moveladder = function(){
-    inLadder = false;
+    ascending = false;
+    descending = false;
     stageDict['stage-1']['Ladder'].forEach( function( item: Ladder ){
         let leftLadder = item.left;
         let rightLadder = item.left + 30;//width 30
         let bottomLadder = item.bottom ;
         let topLadder = item.height + item.bottom;
-        let bottomPlayer = parseFloat(window.getComputedStyle($('#player')[0]).bottom) ;
-        let middlePlayer = (parseFloat(window.getComputedStyle($('#player')[0]).left) + parseFloat(window.getComputedStyle($('#player')[0]).width))/2;
-        //console.debug("middlePlayer",middlePlayer)
-        //console.debug("leftLadder",leftLadder)
-        //console.debug("rightLadder",rightLadder)
-        //console.debug(parseFloat(window.getComputedStyle($('#ladder')[0]).left))
-        if (middlePlayer >= leftLadder && middlePlayer <= rightLadder && bottomPlayer >= bottomLadder && bottomPlayer <= topLadder){
-            inLadder = true;
+        let pos = returnPos();
+        let bottomPlayer = pos['position']['y'] - 30 ;
+        let middlePlayer = pos['position']['x'] + (pos['width']/2);
+        console.debug("bottomPlayer",bottomPlayer)
 
+
+        if (middlePlayer >= leftLadder && middlePlayer <= rightLadder &&  bottomPlayer <= topLadder && bottomPlayer >= bottomLadder ){
+            ascending = true;
+            descending = true;
+
+            if (bottomPlayer == bottomLadder){
+                descending = false;
+            }
         }
    }
 
@@ -86,17 +96,17 @@ let playerFall = function() {
     stageDict['stage-1']['Soil'].forEach( function( item: Soil ){
         let leftPlatform = item.left;
         let rightPlatform = item.width + item.left;
-        let topPlatform = item.bottom + 50;
-        let bottomPlayer = parseFloat(window.getComputedStyle($('#player')[0]).bottom) ;
-        let middlePlayer = (parseFloat(window.getComputedStyle($('#player')[0]).left) + parseFloat(window.getComputedStyle($('#player')[0]).width))/2;
-
-        if (leftPlatform <= middlePlayer && rightPlatform >= middlePlayer && topPlatform >= (bottomPlayer - 5) && topPlatform <= (bottomPlayer + 5)){
+        let topPlatform = item.bottom + 40;
+        let pos = returnPos();
+        let bottomPlayer = pos['position']['y'] - 30;
+        let middlePlayer = pos['position']['x'] + (pos['width']/2);
+        if (leftPlatform <= middlePlayer && rightPlatform >= middlePlayer && topPlatform >= (bottomPlayer-5) && topPlatform <= (bottomPlayer + 5)){
 
             // falling on soil
             falling = false;
             //console.debug(rightPlatform);
             //console.debug(middlePlayer);
-        } else if (inLadder){
+        } else if (ascending || descending){
             falling = false;
         }
 
@@ -115,7 +125,7 @@ function execute() {
     playerFall();
 
 }
-let interval = setInterval( execute , 100 );
+let interval = setInterval( execute , 50 );
 
 
 //left of platform can go down, ruling 550 but visual 300
