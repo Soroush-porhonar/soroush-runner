@@ -2,6 +2,8 @@
 import './Sprite-stand.css'
 import $ from 'jquery'
 
+let direction = null;
+
 class Position {
     x: number;
     y: number;
@@ -43,6 +45,8 @@ export function redrawPlayer() {
 
 export function goLeft() {
     position.x -= step;
+    direction = "left";
+
 
     if ( position.x < 0 ) {
         position.x = 0;
@@ -51,6 +55,8 @@ export function goLeft() {
 
 export function goRight() {
     position.x += step;
+    direction = "right";
+
 
     //debugger;
     if ( position.x + $( player ).outerWidth() > $( player ).parent().width() ) {
@@ -70,7 +76,7 @@ export function fall() {
 
 export function goUp() {
     position.y += 10;
-
+    direction = "up";
     //debugger;
     if ( position.x + $( player ).outerWidth() > $( player ).parent().width() ) {
         position.x = $( player ).parent().width() - $( player ).outerWidth();
@@ -78,9 +84,38 @@ export function goUp() {
 }
 export function goDown() {
     position.y -= 10;
-
+    direction = "down";
     //debugger;
     if ( position.x + $( player ).outerWidth() > $( player ).parent().width() ) {
         position.x = $( player ).parent().width() - $( player ).outerWidth();
     }
+}
+
+export function updateAppearance() {
+    const $p = $('#player');
+    if (direction !== null ) {
+        if (direction == "up" || direction == "down"){
+            if (!$p.hasClass('pixel-behind')) {
+                $p.addClass('pixel-behind').removeClass('pixel-walk').removeClass('pixel-stand');
+            }
+        } else {
+            if (direction == "left"){
+                if (!$p.hasClass('pixel-walk')) {
+                    $p.addClass('pixel-walk').removeClass('pixel-stand').removeClass('pixel-behind').css('transform', 'scaleX(-1)');
+                }
+        } else {
+            if (direction == "right"){
+                if (!$p.hasClass('pixel-walk')) {
+                    $p.addClass('pixel-walk').removeClass('pixel-stand').removeClass('pixel-behind').css('transform', 'scaleX(1)');
+                }
+            }
+        }
+    }
+
+    } else {
+        if (!$p.hasClass('pixel-stand')) {
+            $p.addClass('pixel-stand').removeClass('pixel-walk').removeClass('pixel-behind');
+        }
+    }
+    direction = null; // Reset for the next frame
 }
