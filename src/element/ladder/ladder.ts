@@ -1,7 +1,9 @@
 import './ladder.css'
 import $ from 'jquery'
 
-export function draw_ladder( parent: HTMLDivElement, left: number, bottom: number, height: number) {
+export function draw_ladder( row: number, col: number ) {
+    // TODO: re-implement...
+
     $( parent ).append(
         $( '<div></div>' )
             .attr( 'id', 'ladder' )
@@ -14,8 +16,8 @@ export function draw_ladder( parent: HTMLDivElement, left: number, bottom: numbe
     );
 }
 
-export class ladder {
-    left: number;
-    bottom: number;
-    height: number;
+export class Ladder {
+    row: number;
+    col: number;
+    count: number;
 }

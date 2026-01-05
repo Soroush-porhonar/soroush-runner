@@ -2,8 +2,8 @@
 import $ from 'jquery'
 import { drawPlayer, goLeft, goRight ,goUp ,goDown, redrawPlayer, fall , returnPos, updateAppearance} from './element/player/player.ts'
 import { draw_soil, Soil} from './element/soil/soil.ts'
-import { draw_ring } from './element/ring/ring.ts'
-import {draw_ladder} from './element/ladder/ladder.ts'
+import { draw_ring, getRingState } from './element/ring/ring.ts'
+import { draw_ladder, Ladder } from './element/ladder/ladder.ts'
 
 
 $('#app').html( `
@@ -51,13 +51,13 @@ $( 'body' ).on( 'keydown', body_keydown );
 let stageDict = {
     'stage-1': {
         'Soil': [
-            { left: 0, bottom: 0, width: 5000 } as Soil,
-            { left: 50, bottom: 300, width: 500 } as Soil,
-            {left: 450, bottom: 500, width: 600} as Soil
+            { row:  2, col:  5, count: 10 } as Soil,
+            { row: 15, col: 10, count: 27 } as Soil,
+            { row: 19, col:  0, count: 50 } as Soil
         ],
         'Ladder': [
-            {left: 250, bottom: 40, height: 300} as Ladder,
-            {left: 500, bottom: 340, height: 200} as Ladder
+            { row:  40, col: 250, count: 300 } as Ladder,
+            { row: 340, col: 500, count: 200 } as Ladder
         ]
     }
 };
@@ -65,10 +65,14 @@ let stageDict = {
 
 let ring = draw_ring( $('#app')[0] );
 stageDict['stage-1']['Soil'].forEach( function( item: Soil ) {
-    draw_soil( ring, item.left, item.bottom, item.width );
+    for ( let index = 0; index < item.count; index++ ) {
+        draw_soil( item.row, item.col + index );
+    }
 } );
 stageDict['stage-1']['Ladder'].forEach( function( item: Ladder ) {
-    draw_ladder( ring, item.left, item.bottom, item.height );
+    for ( let index = 0; index < item.count; index++ ) {
+        draw_ladder( item.row + index, item.col );
+    }
 } );
 
 drawPlayer( ring );
@@ -100,6 +104,21 @@ let moveladder = function(){
 ) }
 let playerFall = function() {
     falling = true;
+
+    // ASK RING STATE
+    // TODO: calculate ROW, COL
+    // returnPos(); --> PLAYER-ROW, PLAYER-COL
+    // RING -> Convert X, Y -> ROW, COL
+    const PLAYER_ROW = 0;
+    const PLAYER_COL = 0;
+    const state = getRingState( PLAYER_ROW + 1, PLAYER_COL );
+    if ( state === 0 ) {
+        // FALL
+    } else {
+        // NOT-FALL
+    }
+
+
     stageDict['stage-1']['Soil'].forEach( function( item: Soil ){
         let leftPlatform = item.left;
         let rightPlatform = item.width + item.left;

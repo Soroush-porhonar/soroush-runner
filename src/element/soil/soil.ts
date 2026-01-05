@@ -1,22 +1,19 @@
 import './soil.css'
 import $ from 'jquery'
+import { addObject } from './../ring/ring.ts'
 
-export function draw_soil( parent: HTMLDivElement, left: number, bottom: number ,width: number) {
-    $( parent ).append(
-        $( '<div></div>' )
-            .attr( 'id', 'ground' )
-            .addClass( 'soil' )
-            .css( {
-                left: left,
-                bottom: bottom,
-                width:  width
-            } )
-    );
+const OBJECT_ID = 1;
+
+export function draw_soil( row: number, col: number ) {
+    const $soil = $( '<div></div>' )
+        .addClass( 'soil' );
+
+    addObject( $soil, row, col, OBJECT_ID );
 }
 
 export class Soil {
-    left: number;
-    bottom: number;
-    width: number;
+    col: number;
+    row: number;
+    count: number;
 }
 
