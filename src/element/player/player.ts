@@ -1,12 +1,13 @@
 //import './player.css'
-import './Sprite-stand.css'
-import $ from 'jquery'
+import "./Sprite-stand.css";
+import $ from "jquery";
+import { addObject } from "./../ring/ring.ts";
 
-let direction = null;
+let direction: string = "";
 
 class Position {
-    x: number;
-    y: number;
+  x: number;
+  y: number;
 }
 
 const step: number = 10;
@@ -15,107 +16,125 @@ const height: number = 32;
 let position: Position = new Position();
 let player: HTMLDivElement;
 
-export function drawPlayer( parent: HTMLDivElement ): HTMLDivElement {
-    position.x = 20;
-    position.y = 600;
-    let $player = $( '<div></div>' )
-        .attr( 'id', 'player' )
-        .addClass( 'pixel-stand' )
-        .css( {
-         'left': position.x + 'px',
-         'bottom': position.y + 'px'
-        } );
-    $( parent ).append( $player );
+export function drawPlayer(parent: HTMLDivElement): HTMLDivElement {
+  position.x = 20;
+  position.y = 600;
+  let $player = $("<div></div>")
+    .attr("id", "player")
+    .addClass("pixel-stand")
+    .css({
+      left: position.x + "px",
+      bottom: position.y + "px",
+    });
+  $(parent).append($player);
 
-    player = $player[0];
-    return player;
+  player = $player[0];
+  return player;
 }
 
-export function returnPos(){
-    return {position , width,height }
+export function returnPos() {
+  return { position, width, height };
 }
 
 export function redrawPlayer() {
-    $( '#player' )
-        .css( {
-            'left': position.x + 'px',
-            'bottom': position.y + 'px'
-         } )
+  $("#player").css({
+    left: position.x + "px",
+    bottom: position.y + "px",
+  });
 }
 
 export function goLeft() {
-    position.x -= step;
-    direction = "left";
+  position.x -= step;
+  direction = "left";
 
-
-    if ( position.x < 0 ) {
-        position.x = 0;
-    }
+  if (position.x < 0) {
+    position.x = 0;
+  }
 }
 
 export function goRight() {
-    position.x += step;
-    direction = "right";
+  position.x += step;
+  direction = "right";
 
-
-    //debugger;
-    if ( position.x + $( player ).outerWidth() > $( player ).parent().width() ) {
-        position.x = $( player ).parent().width() - $( player ).outerWidth();
-    }
+  //debugger;
+  if (position.x + $(player).outerWidth() > $(player).parent().width()) {
+    position.x = $(player).parent().width() - $(player).outerWidth();
+  }
 }
 
 export function fall() {
-    position.y -= 10;   // TODO: use const
+  position.y -= 10; // TODO: use const
 
-    // TODO: check conflict / contact with platform!
-    if ( position.y + $( player ).outerHeight() > $( player ).parent().height() ) {
-        position.y = $( player ).parent().height() - $( player ).outerHeight();
-    }
-
+  // TODO: check conflict / contact with platform!
+  if (position.y + $(player).outerHeight() > $(player).parent().height()) {
+    position.y = $(player).parent().height() - $(player).outerHeight();
+  }
 }
 
 export function goUp() {
-    position.y += 10;
-    direction = "up";
-    //debugger;
-    if ( position.x + $( player ).outerWidth() > $( player ).parent().width() ) {
-        position.x = $( player ).parent().width() - $( player ).outerWidth();
-    }
+  position.y += 10;
+  direction = "up";
+  //debugger;
+  if (position.x + $(player).outerWidth() > $(player).parent().width()) {
+    position.x = $(player).parent().width() - $(player).outerWidth();
+  }
 }
 export function goDown() {
-    position.y -= 10;
-    direction = "down";
-    //debugger;
-    if ( position.x + $( player ).outerWidth() > $( player ).parent().width() ) {
-        position.x = $( player ).parent().width() - $( player ).outerWidth();
-    }
+  position.y -= 10;
+  direction = "down";
+  //debugger;
+  if (position.x + $(player).outerWidth() > $(player).parent().width()) {
+    position.x = $(player).parent().width() - $(player).outerWidth();
+  }
 }
 
 export function updateAppearance() {
-    const $p = $('#player');
-    if (direction !== null ) {
-        if (direction == "up" || direction == "down"){
-            if (!$p.hasClass('pixel-behind')) {
-                $p.addClass('pixel-behind').removeClass('pixel-walk').removeClass('pixel-stand');
-            }
-        } else {
-            if (direction == "left"){
-                if (!$p.hasClass('pixel-walk')) {
-                    $p.addClass('pixel-walk').removeClass('pixel-stand').removeClass('pixel-behind').css('transform', 'scaleX(-1)');
-                }
-        } else {
-            if (direction == "right"){
-                if (!$p.hasClass('pixel-walk')) {
-                    $p.addClass('pixel-walk').removeClass('pixel-stand').removeClass('pixel-behind').css('transform', 'scaleX(1)');
-                }
-            }
-        }
-    }
-
+  const $p = $("#player");
+  if (direction !== "") {
+    if (direction == "up" || direction == "down") {
+      if (!$p.hasClass("pixel-behind")) {
+        $p.addClass("pixel-behind")
+          .removeClass("pixel-walk")
+          .removeClass("pixel-stand");
+      }
     } else {
-        if (!$p.hasClass('pixel-stand')) {
-            $p.addClass('pixel-stand').removeClass('pixel-walk').removeClass('pixel-behind');
+      if (direction == "left") {
+        if (!$p.hasClass("pixel-walk")) {
+          $p.addClass("pixel-walk")
+            .removeClass("pixel-stand")
+            .removeClass("pixel-behind")
+            .css("transform", "scaleX(-1)");
         }
+      } else {
+        if (direction == "right") {
+          if (!$p.hasClass("pixel-walk")) {
+            $p.addClass("pixel-walk")
+              .removeClass("pixel-stand")
+              .removeClass("pixel-behind")
+              .css("transform", "scaleX(1)");
+          }
+        }
+      }
     }
-    direction = null; // Reset for the next frame
+  } else {
+    if (!$p.hasClass("pixel-stand")) {
+      $p.addClass("pixel-stand")
+        .removeClass("pixel-walk")
+        .removeClass("pixel-behind");
+    }
+  }
+  direction = ""; // Reset for the next frame
+}
+
+const OBJECT_ID = 3;
+
+export function draw_player(row: number, col: number) {
+  const $player = $("<div></div>").attr("id", "player").addClass("pixel-stand");
+
+  addObject($player, row, col, OBJECT_ID);
+}
+export class Player {
+  col: number;
+  row: number;
+  fall: boolean;
 }

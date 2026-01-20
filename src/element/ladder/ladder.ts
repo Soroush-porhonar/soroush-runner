@@ -1,23 +1,19 @@
 import './ladder.css'
 import $ from 'jquery'
+import { addObject } from './../ring/ring.ts'
+
+const OBJECT_ID = 2;
 
 export function draw_ladder( row: number, col: number ) {
-    // TODO: re-implement...
+    const $ladder = $( '<div></div>' )
+        .addClass( 'ladder' );
 
-    $( parent ).append(
-        $( '<div></div>' )
-            .attr( 'id', 'ladder' )
-            .addClass( 'ladder' )
-            .css( {
-                left: left,
-                bottom: bottom,
-                height:  height
-            } )
-    );
+    addObject( $ladder, row, col, OBJECT_ID );
 }
 
 export class Ladder {
-    row: number;
     col: number;
+    row: number;
     count: number;
 }
+

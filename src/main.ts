@@ -1,6 +1,6 @@
 
 import $ from 'jquery'
-import { drawPlayer, goLeft, goRight ,goUp ,goDown, redrawPlayer, fall , returnPos, updateAppearance} from './element/player/player.ts'
+import { draw_player, Player, goLeft, goRight ,goUp ,goDown, redrawPlayer, fall , returnPos, updateAppearance} from './element/player/player.ts'
 import { draw_soil, Soil} from './element/soil/soil.ts'
 import { draw_ring, getRingState } from './element/ring/ring.ts'
 import { draw_ladder, Ladder } from './element/ladder/ladder.ts'
@@ -53,17 +53,18 @@ let stageDict = {
         'Soil': [
             { row:  2, col:  5, count: 10 } as Soil,
             { row: 15, col: 10, count: 27 } as Soil,
-            { row: 19, col:  0, count: 50 } as Soil
+            { row: 29, col:  0, count: 60 } as Soil
         ],
         'Ladder': [
-            { row:  40, col: 250, count: 300 } as Ladder,
-            { row: 340, col: 500, count: 200 } as Ladder
+            { row: 15, col: 5, count: 10 } as Ladder,
+            { row: 0  , col: 10, count: 10 } as Ladder
         ]
     }
 };
 
 
 let ring = draw_ring( $('#app')[0] );
+
 stageDict['stage-1']['Soil'].forEach( function( item: Soil ) {
     for ( let index = 0; index < item.count; index++ ) {
         draw_soil( item.row, item.col + index );
@@ -75,7 +76,8 @@ stageDict['stage-1']['Ladder'].forEach( function( item: Ladder ) {
     }
 } );
 
-drawPlayer( ring );
+
+draw_player( row = 10 , col = 15 );
 
 let moveladder = function(){
     ascending = false;

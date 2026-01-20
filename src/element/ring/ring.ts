@@ -1,8 +1,8 @@
 import './ring.css'
 import $ from 'jquery'
 
-const ROWS = 20;
-const COLS = 50;
+const ROWS = 30;
+const COLS = 60;
 const RING: number[][] = Array.from({ length: ROWS }, () => Array( COLS ).fill( 0 ));
 
 let $RING;
