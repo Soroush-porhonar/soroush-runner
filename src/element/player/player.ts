@@ -1,92 +1,130 @@
-//import './player.css'
-import "./Sprite-stand.css";
+import "./player.css";
 import $ from "jquery";
-import { addObject } from "./../ring/ring.ts";
+import { addObject, removeObject, getRingState } from "./../ring/ring.ts";
+import { Soil, draw_soil, resetSoil } from "./../soil/soil.ts";
 
-let direction: string = "";
+export class Player {
+  col: number;
+  row: number;
 
-class Position {
-  x: number;
-  y: number;
+  constructor(col: number, row: number) {
+    this.col = col;
+    this.row = row;
+  }
 }
 
-const step: number = 10;
-const width: number = 16;
-const height: number = 32;
-let position: Position = new Position();
-let player: HTMLDivElement;
+let player: object;
+export let playerState: string = "falling";
+let BehindPlayerId: number;
 
-export function drawPlayer(parent: HTMLDivElement): HTMLDivElement {
-  position.x = 20;
-  position.y = 600;
-  let $player = $("<div></div>")
-    .attr("id", "player")
-    .addClass("pixel-stand")
-    .css({
-      left: position.x + "px",
-      bottom: position.y + "px",
-    });
-  $(parent).append($player);
+export function resetPlayer(row: number, col: number, targetId: number) {
+  const $player = $("#player").remove();
 
-  player = $player[0];
-  return player;
+  removeObject($player, row, col, targetId);
 }
 
-export function returnPos() {
-  return { position, width, height };
+export function draw_player(row: number, col: number) {
+  player = { row, col };
+  const OBJECT_ID: number = 3;
+  const $player = $("<div></div>").attr("id", "player").addClass("player");
+  BehindPlayerId = getRingState(row, col);
+  addObject($player, row, col, OBJECT_ID);
 }
 
-export function redrawPlayer() {
-  $("#player").css({
-    left: position.x + "px",
-    bottom: position.y + "px",
-  });
+export function playerFall() {
+  let underboxId: number = getRingState(player.row + 1, player.col);
+  if (underboxId == 0) {
+    resetPlayer(player.row, player.col, BehindPlayerId);
+    player.row = player.row + 1;
+    draw_player(player.row, player.col);
+    playerState = "falling";
+  } else {
+    if (playerState != "climbing") {
+      playerState = "standing";
+    }
+  }
 }
 
 export function goLeft() {
-  position.x -= step;
-  direction = "left";
-
-  if (position.x < 0) {
-    position.x = 0;
+  //playerState = "walking-left";
+  let leftboxId: number = getRingState(player.row, player.col - 1);
+  if ((playerState == "standing") & (leftboxId == 0 || leftboxId == 2)) {
+    resetPlayer(player.row, player.col, BehindPlayerId);
+    player.col = player.col - 1;
+    draw_player(player.row, player.col);
   }
+  //playerState = "standing";
 }
 
 export function goRight() {
-  position.x += step;
-  direction = "right";
-
-  //debugger;
-  if (position.x + $(player).outerWidth() > $(player).parent().width()) {
-    position.x = $(player).parent().width() - $(player).outerWidth();
+  //playerState = "walking-right";
+  let rightboxId: number = getRingState(player.row, player.col + 1);
+  if ((playerState == "standing") & (rightboxId == 0 || rightboxId == 2)) {
+    resetPlayer(player.row, player.col, BehindPlayerId);
+    player.col = player.col + 1;
+    draw_player(player.row, player.col);
   }
-}
-
-export function fall() {
-  position.y -= 10; // TODO: use const
-
-  // TODO: check conflict / contact with platform!
-  if (position.y + $(player).outerHeight() > $(player).parent().height()) {
-    position.y = $(player).parent().height() - $(player).outerHeight();
-  }
+  //playerState = "standing";
 }
 
 export function goUp() {
-  position.y += 10;
-  direction = "up";
-  //debugger;
-  if (position.x + $(player).outerWidth() > $(player).parent().width()) {
-    position.x = $(player).parent().width() - $(player).outerWidth();
+  let upperboxId: number = getRingState(player.row - 1, player.col);
+  if (BehindPlayerId == 2) {
+    resetPlayer(player.row, player.col, BehindPlayerId);
+    player.row = player.row - 1;
+    draw_player(player.row, player.col);
+    playerState = "climbing";
+    if (!(upperboxId == 2)) {
+      playerState = "standing";
+    }
   }
 }
+
 export function goDown() {
-  position.y -= 10;
-  direction = "down";
-  //debugger;
-  if (position.x + $(player).outerWidth() > $(player).parent().width()) {
-    position.x = $(player).parent().width() - $(player).outerWidth();
+  let underboxId: number = getRingState(player.row + 1, player.col);
+  if (underboxId == 2) {
+    resetPlayer(player.row, player.col, BehindPlayerId);
+    player.row = player.row + 1;
+    draw_player(player.row, player.col);
+    playerState = "climbing";
+    if (!(getRingState(player.row + 1, player.col) == 2)) {
+      playerState = "standing";
+    }
   }
 }
+
+export function digLeft() {
+  //playerState = "walking-left";
+  const leftAxe: object = new Soil(player.row + 1, player.col - 1);
+  const leftAxeId: number = getRingState(leftAxe.col, leftAxe.row);
+  if ((playerState == "standing") & (leftAxeId == 1)) {
+    resetSoil(leftAxe.col, leftAxe.row, 0);
+    setTimeout(() => {
+      draw_soil(leftAxe.col, leftAxe.row);
+    }, 2000);
+  }
+  //playerState = "standing";
+}
+
+export function digRight() {
+  //playerState = "walking-left";
+  const rightAxe: object = new Soil(player.row + 1, player.col + 1);
+  const rightAxeId: number = getRingState(rightAxe.col, rightAxe.row);
+
+  if ((playerState == "standing") & (rightAxeId == 1)) {
+    resetSoil(rightAxe.col, rightAxe.row, 0);
+    setTimeout(() => {
+      draw_soil(rightAxe.col, rightAxe.row);
+    }, 2000);
+  }
+  //playerState = "standing";
+}
+/*
+
+
+
+
+
 
 export function updateAppearance() {
   const $p = $("#player");
@@ -116,7 +154,7 @@ export function updateAppearance() {
         }
       }
     }
-  } else {
+  } /* else {
     if (!$p.hasClass("pixel-stand")) {
       $p.addClass("pixel-stand")
         .removeClass("pixel-walk")
@@ -125,16 +163,4 @@ export function updateAppearance() {
   }
   direction = ""; // Reset for the next frame
 }
-
-const OBJECT_ID = 3;
-
-export function draw_player(row: number, col: number) {
-  const $player = $("<div></div>").attr("id", "player").addClass("pixel-stand");
-
-  addObject($player, row, col, OBJECT_ID);
-}
-export class Player {
-  col: number;
-  row: number;
-  fall: boolean;
-}
+*/
