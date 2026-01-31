@@ -7,16 +7,17 @@ const RING: number[][] = Array.from({ length: ROWS }, () =>
   Array(COLS).fill(0)
 );
 
+
 let $RING;
+
 
 export function draw_ring(parent: HTMLDivElement): HTMLDivElement {
   let $ring = $("<div></div>").attr("id", "ring").addClass("ring").css({});
   $(parent).prepend($ring);
-
   $RING = $ring;
-
   return $ring[0];
 }
+
 
 export function removeObject(
   object: HTMLDivElement,
@@ -35,6 +36,7 @@ export function removeObject(
 
   RING[row][col] = objId;
 }
+
 
 export function addObject(
   object: HTMLDivElement,

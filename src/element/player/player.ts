@@ -2,18 +2,23 @@ import "./player.css";
 import $ from "jquery";
 import { addObject, removeObject, getRingState } from "./../ring/ring.ts";
 import { Soil, draw_soil, resetSoil } from "./../soil/soil.ts";
+import { removePath, addPath } from "./../enemy/pathfinding.ts";
+
+
 
 export class Player {
-  col: number;
   row: number;
+  col: number;
 
-  constructor(col: number, row: number) {
-    this.col = col;
+
+  constructor(row: number,col: number)  {
     this.row = row;
+    this.col = col;
+
   }
 }
 
-let player: object;
+export let player: Player;
 export let playerState: string = "falling";
 let BehindPlayerId: number;
 
@@ -21,6 +26,8 @@ export function resetPlayer(row: number, col: number, targetId: number) {
   const $player = $("#player").remove();
 
   removeObject($player, row, col, targetId);
+  //addPath(row, col);
+
 }
 
 export function draw_player(row: number, col: number) {
@@ -29,6 +36,7 @@ export function draw_player(row: number, col: number) {
   const $player = $("<div></div>").attr("id", "player").addClass("player");
   BehindPlayerId = getRingState(row, col);
   addObject($player, row, col, OBJECT_ID);
+  //removePath(row, col);
 }
 
 export function playerFall() {
@@ -59,7 +67,9 @@ export function goLeft() {
 export function goRight() {
   //playerState = "walking-right";
   let rightboxId: number = getRingState(player.row, player.col + 1);
+  console.log(rightboxId);
   if ((playerState == "standing") & (rightboxId == 0 || rightboxId == 2)) {
+
     resetPlayer(player.row, player.col, BehindPlayerId);
     player.col = player.col + 1;
     draw_player(player.row, player.col);

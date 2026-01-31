@@ -12,7 +12,8 @@ import {
   digLeft,
   //updateAppearance,
 } from "./element/player/player.ts";
-import { drawEnemy, Enemy, enemyFall } from "./element/enemy/enemy..ts";
+import {moveEnemy} from "./element/enemy/pathfinding.ts";
+import { drawEnemy, Enemy, enemyFall } from "./element/enemy/enemy.ts";
 import { draw_soil, Soil } from "./element/soil/soil.ts";
 import { draw_ring } from "./element/ring/ring.ts";
 import { draw_ladder, Ladder } from "./element/ladder/ladder.ts";
@@ -62,10 +63,10 @@ let stageDict = {
     ],
     Player: [{ row: 10, col: 15 } as Player],
     Enemy: [
-      { row: 17, col: 12, id: 0 } as Enemy,
-      { row: 12, col: 18, id: 1 } as Enemy,
-      { row: 14, col: 20, id: 2 } as Enemy,
-      { row: 20, col: 15, id: 3 } as Enemy,
+      { row: 28, col: 12, id: 0 } as Enemy,
+      /*{ row: 12, col: 18, id: 1 } as Enemy,
+      { row: 14, col: 20, id: 2 } as Enemy,*/
+      { row: 28, col: 16, id: 1 } as Enemy,
     ],
   },
 };
@@ -95,7 +96,8 @@ stageDict["stage-1"]["Enemy"].forEach(function (item: Enemy) {
 function execute() {
   playerFall();
   enemyFall();
-  console.log(playerState);
+  //console.log(playerState);
   gametime;
+  moveEnemy();
 }
 let interval = setInterval(execute, 200);
