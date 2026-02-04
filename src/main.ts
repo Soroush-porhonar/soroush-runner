@@ -7,33 +7,34 @@ import {
   goRight,
   goDown,
   goUp,
-  playerState,
   digRight,
   digLeft,
-  //updateAppearance,
+  visState
 } from "./element/player/player.ts";
 import {moveEnemy} from "./element/enemy/pathfinding.ts";
 import { drawEnemy, Enemy, enemyFall } from "./element/enemy/enemy.ts";
 import { draw_soil, Soil } from "./element/soil/soil.ts";
 import { draw_ring } from "./element/ring/ring.ts";
 import { draw_ladder, Ladder } from "./element/ladder/ladder.ts";
-
+import { drawBar } from "./element/bar/bar.ts";
 $("#app").html(`
   <div class="app">
 
   </div>
 `);
 
-let gametime: number = 0;
+
 function body_keydown(e) {
   switch (e.which) {
     case 37: // LEFT
+      visState("walking-left");
       goLeft();
       break;
     case 38: // UP
       goUp();
       break;
     case 39: // RIGHT
+      visState("walking-right");
       goRight();
       break;
     case 40: // DOWN
@@ -48,7 +49,18 @@ function body_keydown(e) {
   }
 }
 
+function body_keyup(e) {
+    switch (e.which) {
+        case 37: // LEFT
+          visState("standing")
+          break;
+        case 39: // RIGHT
+          visState("standing")
+          break;
+    }
+}
 $("body").on("keydown", body_keydown);
+$("body").on("keyup", body_keyup);
 
 let stageDict = {
   "stage-1": {
@@ -56,18 +68,23 @@ let stageDict = {
       { row: 2, col: 5, count: 10 } as Soil,
       { row: 15, col: 10, count: 27 } as Soil,
       { row: 29, col: 0, count: 90 } as Soil,
+      { row: 13, col: 50, count: 30 } as Soil,
     ],
     Ladder: [
       { row: 15, col: 25, count: 14 } as Ladder,
       { row: 2, col: 12, count: 13 } as Ladder,
+      { row: 2, col: 55, count: 11 } as Ladder,
     ],
     Player: [{ row: 10, col: 15 } as Player],
     Enemy: [
       { row: 28, col: 12, id: 0 } as Enemy,
-      /*{ row: 12, col: 18, id: 1 } as Enemy,
-      { row: 14, col: 20, id: 2 } as Enemy,*/
-      { row: 28, col: 16, id: 1 } as Enemy,
+      { row: 12, col: 18, id: 1 } as Enemy,
+      /*{ row: 14, col: 20, id: 2 } as Enemy,*/
+      { row: 28, col: 16, id: 2 } as Enemy,
     ],
+    Bar: [
+          { row: 10, col: 14, count: 40 } as Bar,
+        ],
   },
 };
 
@@ -93,11 +110,14 @@ stageDict["stage-1"]["Enemy"].forEach(function (item: Enemy) {
   drawEnemy(item.row, item.col, item.id);
 });
 
+stageDict["stage-1"]["Bar"].forEach(function (item: Bar) {
+  for (let index = 0; index < item.count; index++) {
+    drawBar(item.row, item.col + index);
+  }
+});
 function execute() {
   playerFall();
   enemyFall();
-  //console.log(playerState);
-  gametime;
   moveEnemy();
 }
 let interval = setInterval(execute, 200);

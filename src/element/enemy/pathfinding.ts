@@ -1,5 +1,6 @@
 import { enemies, enemiesBehindId, drawEnemy, resetEnemy} from "./enemy.ts";
 import { player} from "./../player/player.ts";
+import { getRingState, checkBorders} from "./../ring/ring.ts";
 
 const ROWS = 30;
 const COLS = 90;
@@ -15,17 +16,8 @@ export function removePath(
   row: number,
   col: number
 ) {
-  if (row < 0 || row >= ROWS) {
-    console.error("Invalid Object request: " + row + " is more than " + ROWS);
-    return false;
-  }
-  if (col < 0 || col >= COLS) {
-    console.error("Invalid Object request: " + col + " is more than " + COLS);
-    return false;
-  }
-
+  checkBorders(row,col);
   // logic
-  const objId: boolean = false
   PATHS[row][col] = false;
 }
 
@@ -36,23 +28,17 @@ export function addPath(
   row: number,
   col: number
 ) {
-  if (row < 0 || row >= ROWS) {
-    console.error("Invalid Object request: " + row + " is more than " + ROWS);
-    return false;
-  }
-  if (col < 0 || col >= COLS) {
-    console.error("Invalid Object request: " + col + " is more than " + COLS);
-    return false;
-  }
-
+  checkBorders(row,col);
   // logic
-  const objId: boolean = true
-  PATHS[row][col] = objId;
+  PATHS[row][col] = true;
 }
 
 
 function isWalkable(row: number, col: number) {
-  return PATHS[row][col] === true;
+    if (checkBorders(row,col)){
+        return PATHS[row][col] === true;
+    }
+    return false;
 }
 
 function notOccupied(row: number, col: number) {
@@ -76,8 +62,17 @@ function notOccupied(row: number, col: number) {
 
 
 
+function isfalling(row, col){
 
-
+    if (checkBorders(row + 1,col)){
+        if (getRingState(row + 1,col) === 0 ){
+            return true;
+        }
+        else{
+            return false}
+    }
+    return true;
+}
 
 
 
@@ -90,9 +85,11 @@ export function moveEnemy() {
           { row: player.row, col: player.col }
         );
 
-        console.log(next);
+
         if (!next) return;
-        if (notOccupied(next.row,next.col)){
+
+        if (notOccupied(next.row,next.col) && (!(isfalling(enemy.row, enemy.col)))) {
+
             resetEnemy(
             enemy.row,
             enemy.col,

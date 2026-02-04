@@ -1,26 +1,60 @@
 import "./player.css";
 import $ from "jquery";
 import { addObject, removeObject, getRingState } from "./../ring/ring.ts";
-import { Soil, draw_soil, resetSoil } from "./../soil/soil.ts";
+import { Soil, draw_soil, resetSoil, handleHoleChar ,searchHole} from "./../soil/soil.ts";
 import { removePath, addPath } from "./../enemy/pathfinding.ts";
-
+import { drawEnemy , enemies, findEnemyId, resetEnemy} from "./../enemy/enemy.ts";
 
 
 export class Player {
   row: number;
   col: number;
-
-
   constructor(row: number,col: number)  {
     this.row = row;
     this.col = col;
-
   }
 }
 
+
 export let player: Player;
-export let playerState: string = "falling";
 let BehindPlayerId: number;
+let playerImg:string = "./src/element/player/player-standing.png";
+let state : string;
+
+
+function changeState(){
+    let state : string;
+    const underboxId: number = getRingState(player.row + 1, player.col);
+
+        if (underboxId == 0 && (!searchHole(player.row , player.col))){
+            state = "falling";
+            }
+        if (underboxId === 1 || underboxId===2 || underboxId===4){
+            state = "standing"
+            }
+        if(BehindPlayerId === 2 ){
+            state = "climbing";
+            }
+        if(BehindPlayerId === 5 ){
+            state = "hanging";
+            }
+    return state
+    };
+
+export function visState(input){
+    if (input === "standing"){
+        playerImg =  "./src/element/player/player-standing.png"
+        }
+    if (input === "walking-left"){
+        playerImg =  "./src/element/player/player-walk-left.png"
+        }
+    if (input === "walking-right"){
+        playerImg =  "./src/element/player/player-walk-right.png"
+        }
+    resetPlayer(player.row, player.col, BehindPlayerId);
+    draw_player(player.row, player.col);
+    }
+
 
 export function resetPlayer(row: number, col: number, targetId: number) {
   const $player = $("#player").remove();
@@ -31,32 +65,35 @@ export function resetPlayer(row: number, col: number, targetId: number) {
 }
 
 export function draw_player(row: number, col: number) {
+
   player = { row, col };
   const OBJECT_ID: number = 3;
-  const $player = $("<div></div>").attr("id", "player").addClass("player");
+  const $player = $("<img>")
+      .attr("id", "player")
+      .attr("src", playerImg) // Set the source of the image
+      .addClass("player");
+  // save id of Box which player in now in to restore it after player moved
   BehindPlayerId = getRingState(row, col);
   addObject($player, row, col, OBJECT_ID);
   //removePath(row, col);
 }
 
 export function playerFall() {
-  let underboxId: number = getRingState(player.row + 1, player.col);
-  if (underboxId == 0) {
+    if (changeState() == "falling") {
     resetPlayer(player.row, player.col, BehindPlayerId);
     player.row = player.row + 1;
     draw_player(player.row, player.col);
-    playerState = "falling";
-  } else {
-    if (playerState != "climbing") {
-      playerState = "standing";
+
+    // add player Pos to path to continue enemy search
+    if(searchHole(player.row , player.col)){addPath(player.row, player.col);};
     }
-  }
 }
 
+
 export function goLeft() {
-  //playerState = "walking-left";
   let leftboxId: number = getRingState(player.row, player.col - 1);
-  if ((playerState == "standing") & (leftboxId == 0 || leftboxId == 2)) {
+  if ((changeState() === "standing" ||changeState() === "climbing" || changeState() === "hanging") & (leftboxId == 0 || leftboxId == 2)) {
+    //changeState("walking-left");
     resetPlayer(player.row, player.col, BehindPlayerId);
     player.col = player.col - 1;
     draw_player(player.row, player.col);
@@ -67,9 +104,8 @@ export function goLeft() {
 export function goRight() {
   //playerState = "walking-right";
   let rightboxId: number = getRingState(player.row, player.col + 1);
-  console.log(rightboxId);
-  if ((playerState == "standing") & (rightboxId == 0 || rightboxId == 2)) {
-
+  if ((changeState() == "standing" || changeState() == "climbing" || changeState() === "hanging") & (rightboxId == 0 || rightboxId == 2)) {
+    changeState("walking-left");
     resetPlayer(player.row, player.col, BehindPlayerId);
     player.col = player.col + 1;
     draw_player(player.row, player.col);
@@ -79,14 +115,11 @@ export function goRight() {
 
 export function goUp() {
   let upperboxId: number = getRingState(player.row - 1, player.col);
-  if (BehindPlayerId == 2) {
+  if (changeState() == "climbing") {
     resetPlayer(player.row, player.col, BehindPlayerId);
     player.row = player.row - 1;
     draw_player(player.row, player.col);
-    playerState = "climbing";
-    if (!(upperboxId == 2)) {
-      playerState = "standing";
-    }
+
   }
 }
 
@@ -96,81 +129,40 @@ export function goDown() {
     resetPlayer(player.row, player.col, BehindPlayerId);
     player.row = player.row + 1;
     draw_player(player.row, player.col);
-    playerState = "climbing";
-    if (!(getRingState(player.row + 1, player.col) == 2)) {
-      playerState = "standing";
-    }
   }
 }
 
 export function digLeft() {
-  //playerState = "walking-left";
   const leftAxe: object = new Soil(player.row + 1, player.col - 1);
-  const leftAxeId: number = getRingState(leftAxe.col, leftAxe.row);
-  if ((playerState == "standing") & (leftAxeId == 1)) {
-    resetSoil(leftAxe.col, leftAxe.row, 0);
-    setTimeout(() => {
-      draw_soil(leftAxe.col, leftAxe.row);
-    }, 2000);
-  }
-  //playerState = "standing";
+  const leftAxeId: number = getRingState(leftAxe.row, leftAxe.col);
+  if ((changeState() == "standing") & (leftAxeId == 1)) {
+    handleHoleChar(leftAxe.row, leftAxe.col);
+  };
+
 }
+
+
+const findSubArray = (array, value1, index1, value2, index2) => {
+     const result = array.find(subArray => subArray[index1] === value1 && subArray[index2] === value2);
+     return result
+};
 
 export function digRight() {
-  //playerState = "walking-left";
+
   const rightAxe: object = new Soil(player.row + 1, player.col + 1);
-  const rightAxeId: number = getRingState(rightAxe.col, rightAxe.row);
+  const rightAxeId: number = getRingState(rightAxe.row, rightAxe.col);
 
-  if ((playerState == "standing") & (rightAxeId == 1)) {
-    resetSoil(rightAxe.col, rightAxe.row, 0);
-    setTimeout(() => {
-      draw_soil(rightAxe.col, rightAxe.row);
-    }, 2000);
+  if ((changeState() == "standing") & (rightAxeId == 1)) {
+    handleHoleChar(rightAxe.row, rightAxe.col);
+
   }
-  //playerState = "standing";
 }
-/*
+export function playerRestoreHole(row, col){
+    if (getRingState(row, col) === 3){
+        resetPlayer(row, col, 0 );
+        draw_player(row - 1, col);
+        removePath(row, col);
 
+    };
 
-
-
-
-
-export function updateAppearance() {
-  const $p = $("#player");
-  if (direction !== "") {
-    if (direction == "up" || direction == "down") {
-      if (!$p.hasClass("pixel-behind")) {
-        $p.addClass("pixel-behind")
-          .removeClass("pixel-walk")
-          .removeClass("pixel-stand");
-      }
-    } else {
-      if (direction == "left") {
-        if (!$p.hasClass("pixel-walk")) {
-          $p.addClass("pixel-walk")
-            .removeClass("pixel-stand")
-            .removeClass("pixel-behind")
-            .css("transform", "scaleX(-1)");
-        }
-      } else {
-        if (direction == "right") {
-          if (!$p.hasClass("pixel-walk")) {
-            $p.addClass("pixel-walk")
-              .removeClass("pixel-stand")
-              .removeClass("pixel-behind")
-              .css("transform", "scaleX(1)");
-          }
-        }
-      }
-    }
-  } /* else {
-    if (!$p.hasClass("pixel-stand")) {
-      $p.addClass("pixel-stand")
-        .removeClass("pixel-walk")
-        .removeClass("pixel-behind");
-    }
-  }
-  direction = ""; // Reset for the next frame
 }
-*/

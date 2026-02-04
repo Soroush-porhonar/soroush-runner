@@ -11,6 +11,18 @@ const RING: number[][] = Array.from({ length: ROWS }, () =>
 let $RING;
 
 
+export function checkBorders(row, col){
+    if (row < 0 || row >= ROWS) {
+        //console.error("Invalid Object request: " + row + " is more than " + ROWS);
+        return false;
+    }
+    if (col < 0 || col >= COLS) {
+        //console.error("Invalid Object request: " + col + " is more than " + COLS);
+        return false;
+    }
+    return true
+}
+
 export function draw_ring(parent: HTMLDivElement): HTMLDivElement {
   let $ring = $("<div></div>").attr("id", "ring").addClass("ring").css({});
   $(parent).prepend($ring);
@@ -25,14 +37,7 @@ export function removeObject(
   col: number,
   objId: number
 ) {
-  if (row < 0 || row >= ROWS) {
-    console.error("Invalid Object request: " + row + " is more than " + ROWS);
-    return;
-  }
-  if (col < 0 || col >= COLS) {
-    console.error("Invalid Object request: " + col + " is more than " + COLS);
-    return;
-  }
+  checkBorders(row, col)
 
   RING[row][col] = objId;
 }
@@ -44,14 +49,7 @@ export function addObject(
   col: number,
   objId: number
 ) {
-  if (row < 0 || row >= ROWS) {
-    console.error("Invalid Object request: " + row + " is more than " + ROWS);
-    return false;
-  }
-  if (col < 0 || col >= COLS) {
-    console.error("Invalid Object request: " + col + " is more than " + COLS);
-    return false;
-  }
+  checkBorders(row, col)
 
   // logic
   RING[row][col] = objId;
@@ -73,5 +71,11 @@ export function addObject(
 }
 
 export function getRingState(row: number, col: number) {
-  return RING[row][col];
+        return RING[row][col];
+
+
+
+
+
+
 }
