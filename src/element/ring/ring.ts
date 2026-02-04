@@ -44,13 +44,14 @@ export function removeObject(
 
 
 export function addObject(
+
   object: HTMLDivElement,
   row: number,
   col: number,
   objId: number
 ) {
   checkBorders(row, col)
-
+    console.log(RING);
   // logic
   RING[row][col] = objId;
 

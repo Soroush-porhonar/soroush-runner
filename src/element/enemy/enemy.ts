@@ -68,11 +68,27 @@ export function enemyRestoreHole(row , col){
         }
 }
 
+
+export function isFalling(row, col, index){
+    const underboxId: number = getRingState(row + 1, col);
+    let result : boolean = false
+    if (underboxId === 0){
+        result = true;
+        };
+    if (searchHole(row , col)){
+        result = false;
+        };
+    if (enemiesBehindId[index] === 5){
+        result = false;
+        };
+
+    return result;
+}
+
 export function enemyFall() {
   enemies.forEach((enemy, index) => {
     if (checkBorders(enemy.row + 1, enemy.col)){
-        let underboxId: number = getRingState(enemy.row + 1, enemy.col);
-        if (underboxId == 0 && (!searchHole(enemy.row , enemy.col))) {
+        if (isFalling(enemy.row, enemy.col, index) ) {
           resetEnemy(enemy.row, enemy.col, enemy.id, enemiesBehindId[index]);
           enemy.row++;
           drawEnemy(enemy.row, enemy.col, enemy.id);
@@ -83,13 +99,6 @@ export function enemyFall() {
 
 }
 
-
-export function moveEnemy(){
-   const enemy: Pos = {
-       row: enemies[0].row,
-       col: enemies[0].col
-   };
-}
 
 
 

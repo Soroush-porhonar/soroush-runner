@@ -62,7 +62,7 @@ export function searchHole(row, col){
         return false;
         }
     }
-
+// restoring a holed soil and the path to continue player search  checking if enemy or player is in it to restore them as well
 export function handleHoleChar(row, col){
     resetSoil(row, col, 0);
     addHole(row, col);
@@ -73,4 +73,4 @@ export function handleHoleChar(row, col){
       removeHole(row, col);
       draw_soil(row, col);
     }, 3000);
-    }
+}

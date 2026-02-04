@@ -12,13 +12,13 @@ export class Bar {
 
   }
 }
-
+// draw bar , add object id, add path
 export function drawBar(row: number, col: number) {
   const OBJECT_ID = 5;
   const id: string = row + "-" + col;
-  const $soil = $("<div></div>")
+  const $bar = $("<div></div>")
     .attr("id", "bar" + id)
     .addClass("bar");
-  addObject($soil, row, col, OBJECT_ID);
+  addObject($bar, row, col, OBJECT_ID);
   addPath(row ,col )
 }

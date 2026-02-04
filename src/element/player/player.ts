@@ -18,15 +18,16 @@ export class Player {
 
 export let player: Player;
 let BehindPlayerId: number;
+//curren image for player
 let playerImg:string = "./src/element/player/player-standing.png";
-let state : string;
 
 
+// change state of player effecting logic of game only
 function changeState(){
     let state : string;
     const underboxId: number = getRingState(player.row + 1, player.col);
 
-        if (underboxId == 0 && (!searchHole(player.row , player.col))){
+        if ((underboxId == 0 && (!searchHole(player.row , player.col))) ) {
             state = "falling";
             }
         if (underboxId === 1 || underboxId===2 || underboxId===4){
@@ -38,9 +39,12 @@ function changeState(){
         if(BehindPlayerId === 5 ){
             state = "hanging";
             }
-    return state
-    };
 
+    return state
+};
+
+
+//updating image based on keydown and up for player visual
 export function visState(input){
     if (input === "standing"){
         playerImg =  "./src/element/player/player-standing.png"
@@ -51,14 +55,14 @@ export function visState(input){
     if (input === "walking-right"){
         playerImg =  "./src/element/player/player-walk-right.png"
         }
+    //forcing a redraw to update the image on spot not after a move
     resetPlayer(player.row, player.col, BehindPlayerId);
     draw_player(player.row, player.col);
-    }
+}
 
-
+// removing the player box, making it empty
 export function resetPlayer(row: number, col: number, targetId: number) {
   const $player = $("#player").remove();
-
   removeObject($player, row, col, targetId);
   //addPath(row, col);
 
@@ -72,16 +76,19 @@ export function draw_player(row: number, col: number) {
       .attr("id", "player")
       .attr("src", playerImg) // Set the source of the image
       .addClass("player");
-  // save id of Box which player in now in to restore it after player moved
+
+  // save id of Box which player is in now, to restore it after player moved
   BehindPlayerId = getRingState(row, col);
   addObject($player, row, col, OBJECT_ID);
   //removePath(row, col);
+
 }
 
 export function playerFall() {
     if (changeState() == "falling") {
+
     resetPlayer(player.row, player.col, BehindPlayerId);
-    player.row = player.row + 1;
+    player.row++;
     draw_player(player.row, player.col);
 
     // add player Pos to path to continue enemy search
@@ -91,43 +98,39 @@ export function playerFall() {
 
 
 export function goLeft() {
-  let leftboxId: number = getRingState(player.row, player.col - 1);
-  if ((changeState() === "standing" ||changeState() === "climbing" || changeState() === "hanging") & (leftboxId == 0 || leftboxId == 2)) {
-    //changeState("walking-left");
+  const leftboxId: number = getRingState(player.row, player.col - 1);
+  if ((changeState() === "standing" ||changeState() === "climbing" || changeState() === "hanging") & (leftboxId == 0 || leftboxId == 2 || leftboxId == 5)) {
     resetPlayer(player.row, player.col, BehindPlayerId);
     player.col = player.col - 1;
     draw_player(player.row, player.col);
   }
-  //playerState = "standing";
 }
 
 export function goRight() {
-  //playerState = "walking-right";
-  let rightboxId: number = getRingState(player.row, player.col + 1);
-  if ((changeState() == "standing" || changeState() == "climbing" || changeState() === "hanging") & (rightboxId == 0 || rightboxId == 2)) {
+  const rightboxId: number = getRingState(player.row, player.col + 1);
+  console.log(rightboxId);
+  if ((changeState() == "standing" || changeState() == "climbing" || changeState() === "hanging") & (rightboxId == 0 || rightboxId == 2|| rightboxId == 5)) {
     changeState("walking-left");
     resetPlayer(player.row, player.col, BehindPlayerId);
     player.col = player.col + 1;
     draw_player(player.row, player.col);
   }
-  //playerState = "standing";
 }
 
 export function goUp() {
-  let upperboxId: number = getRingState(player.row - 1, player.col);
   if (changeState() == "climbing") {
     resetPlayer(player.row, player.col, BehindPlayerId);
-    player.row = player.row - 1;
+    player.row --;
     draw_player(player.row, player.col);
 
   }
 }
 
 export function goDown() {
-  let underboxId: number = getRingState(player.row + 1, player.col);
-  if (underboxId == 2) {
+  const underboxId: number = getRingState(player.row + 1, player.col);
+  if (underboxId == 2 || changeState() === "hanging" ) {
     resetPlayer(player.row, player.col, BehindPlayerId);
-    player.row = player.row + 1;
+    player.row ++;
     draw_player(player.row, player.col);
   }
 }
@@ -157,6 +160,7 @@ export function digRight() {
 
   }
 }
+//checking if player is in hole and pushing it upward on surface again
 export function playerRestoreHole(row, col){
     if (getRingState(row, col) === 3){
         resetPlayer(row, col, 0 );

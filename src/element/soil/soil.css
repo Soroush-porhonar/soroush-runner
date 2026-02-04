@@ -1,5 +1,6 @@
 .soil {
   position: absolute;
   background-color: #954535;
+  border: 3px double black;
 
 }

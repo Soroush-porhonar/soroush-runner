@@ -75,15 +75,17 @@ let stageDict = {
       { row: 2, col: 12, count: 13 } as Ladder,
       { row: 2, col: 55, count: 11 } as Ladder,
     ],
-    Player: [{ row: 10, col: 15 } as Player],
+    Player: [
+        { row: 10, col: 15 } as Player
+        ],
     Enemy: [
       { row: 28, col: 12, id: 0 } as Enemy,
-      { row: 12, col: 18, id: 1 } as Enemy,
-      /*{ row: 14, col: 20, id: 2 } as Enemy,*/
+      { row: 13, col: 18, id: 1 } as Enemy,
       { row: 28, col: 16, id: 2 } as Enemy,
+      /*{ row: 14, col: 20, id: 3 } as Enemy,*/
     ],
     Bar: [
-          { row: 10, col: 14, count: 40 } as Bar,
+          { row: 10, col: 13, count: 42 } as Bar,
         ],
   },
 };
@@ -102,6 +104,12 @@ stageDict["stage-1"]["Ladder"].forEach(function (item: Ladder) {
   }
 });
 
+stageDict["stage-1"]["Bar"].forEach(function (item: Bar) {
+  for (let index = 0; index < item.count; index++) {
+    drawBar(item.row, item.col + index);
+  }
+});
+
 stageDict["stage-1"]["Player"].forEach(function (item: Player) {
   draw_player(item.row, item.col);
 });
@@ -110,11 +118,9 @@ stageDict["stage-1"]["Enemy"].forEach(function (item: Enemy) {
   drawEnemy(item.row, item.col, item.id);
 });
 
-stageDict["stage-1"]["Bar"].forEach(function (item: Bar) {
-  for (let index = 0; index < item.count; index++) {
-    drawBar(item.row, item.col + index);
-  }
-});
+
+
+
 function execute() {
   playerFall();
   enemyFall();

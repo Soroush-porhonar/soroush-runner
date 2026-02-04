@@ -1,6 +1,7 @@
-import { enemies, enemiesBehindId, drawEnemy, resetEnemy} from "./enemy.ts";
+import { enemies, enemiesBehindId, drawEnemy, resetEnemy, findEnemyId, isFalling} from "./enemy.ts";
 import { player} from "./../player/player.ts";
 import { getRingState, checkBorders} from "./../ring/ring.ts";
+import { searchHole } from "./../soil/soil.ts";
 
 const ROWS = 30;
 const COLS = 90;
@@ -41,12 +42,13 @@ function isWalkable(row: number, col: number) {
     return false;
 }
 
+
+//check if box is not filled with player or enemies
 function notOccupied(row: number, col: number) {
     const isPlayer = (row === player.row && col === player.col)
     if (isPlayer){
         return false
         }
-
     for (let index = 0; index < enemies.length; index++) {
         const enemy = enemies[index];
         let isEnemy = (row === enemy.row && col === enemy.col);
@@ -62,20 +64,7 @@ function notOccupied(row: number, col: number) {
 
 
 
-function isfalling(row, col){
-
-    if (checkBorders(row + 1,col)){
-        if (getRingState(row + 1,col) === 0 ){
-            return true;
-        }
-        else{
-            return false}
-    }
-    return true;
-}
-
-
-
+//for each enemy caculate path to player, check if it should move
 export function moveEnemy() {
 
     enemies.forEach((enemy, index) => {
@@ -88,7 +77,7 @@ export function moveEnemy() {
 
         if (!next) return;
 
-        if (notOccupied(next.row,next.col) && (!(isfalling(enemy.row, enemy.col)))) {
+        if (notOccupied(next.row,next.col) && (!(isFalling( enemy.row, enemy.col, index )))) {
 
             resetEnemy(
             enemy.row,
