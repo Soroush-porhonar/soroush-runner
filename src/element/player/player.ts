@@ -18,7 +18,7 @@ export class Player {
 
 export let player: Player;
 let BehindPlayerId: number;
-//curren image for player
+//current image for player
 let playerImg:string = "./src/element/player/player-standing.png";
 
 
@@ -27,8 +27,12 @@ function changeState(){
     let state : string;
     const underboxId: number = getRingState(player.row + 1, player.col);
 
-        if ((underboxId == 0 && (!searchHole(player.row , player.col))) ) {
+        if (underboxId === 0 || underboxId === 5) {
             state = "falling";
+            }
+        //check player not be in hole
+        if (searchHole(player.row , player.col)){
+            state = "standing"
             }
         if (underboxId === 1 || underboxId===2 || underboxId===4){
             state = "standing"
@@ -99,7 +103,7 @@ export function playerFall() {
 
 export function goLeft() {
   const leftboxId: number = getRingState(player.row, player.col - 1);
-  if ((changeState() === "standing" ||changeState() === "climbing" || changeState() === "hanging") & (leftboxId == 0 || leftboxId == 2 || leftboxId == 5)) {
+  if ((changeState() === "standing" ||changeState() === "climbing" || changeState() === "hanging") & (leftboxId == 0 || leftboxId == 2 || leftboxId == 5 || leftboxId == 6 )) {
     resetPlayer(player.row, player.col, BehindPlayerId);
     player.col = player.col - 1;
     draw_player(player.row, player.col);
@@ -108,9 +112,7 @@ export function goLeft() {
 
 export function goRight() {
   const rightboxId: number = getRingState(player.row, player.col + 1);
-  console.log(rightboxId);
-  if ((changeState() == "standing" || changeState() == "climbing" || changeState() === "hanging") & (rightboxId == 0 || rightboxId == 2|| rightboxId == 5)) {
-    changeState("walking-left");
+  if ((changeState() == "standing" || changeState() == "climbing" || changeState() === "hanging") & (rightboxId == 0 || rightboxId == 2 || rightboxId == 5 || rightboxId == 6)) {
     resetPlayer(player.row, player.col, BehindPlayerId);
     player.col = player.col + 1;
     draw_player(player.row, player.col);
@@ -145,16 +147,10 @@ export function digLeft() {
 }
 
 
-const findSubArray = (array, value1, index1, value2, index2) => {
-     const result = array.find(subArray => subArray[index1] === value1 && subArray[index2] === value2);
-     return result
-};
-
 export function digRight() {
 
-  const rightAxe: object = new Soil(player.row + 1, player.col + 1);
+  const rightAxe: Soil = new Soil(player.row + 1, player.col + 1);
   const rightAxeId: number = getRingState(rightAxe.row, rightAxe.col);
-
   if ((changeState() == "standing") & (rightAxeId == 1)) {
     handleHoleChar(rightAxe.row, rightAxe.col);
 

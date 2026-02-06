@@ -51,7 +51,7 @@ export function addObject(
   objId: number
 ) {
   checkBorders(row, col)
-    console.log(RING);
+
   // logic
   RING[row][col] = objId;
 

@@ -71,12 +71,13 @@ export function enemyRestoreHole(row , col){
 
 export function isFalling(row, col, index){
     const underboxId: number = getRingState(row + 1, col);
-    let result : boolean = false
+    let result : boolean
     if (underboxId === 0){
         result = true;
         };
     if (searchHole(row , col)){
         result = false;
+
         };
     if (enemiesBehindId[index] === 5){
         result = false;
@@ -89,8 +90,10 @@ export function enemyFall() {
   enemies.forEach((enemy, index) => {
     if (checkBorders(enemy.row + 1, enemy.col)){
         if (isFalling(enemy.row, enemy.col, index) ) {
+          //console.log(enemiesBehindId[index]);
+          //console.log(getRingState(enemy.row +1, enemy.col));
           resetEnemy(enemy.row, enemy.col, enemy.id, enemiesBehindId[index]);
-          enemy.row++;
+          enemy.row = enemy.row + 1 ;
           drawEnemy(enemy.row, enemy.col, enemy.id);
         }
     }

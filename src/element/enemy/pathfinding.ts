@@ -77,7 +77,7 @@ export function moveEnemy() {
 
         if (!next) return;
 
-        if (notOccupied(next.row,next.col) && (!(isFalling( enemy.row, enemy.col, index )))) {
+        if (notOccupied(next.row,next.col) && getRingState(enemy.row , enemy.col ) !== 0 && !searchHole(enemy.row , enemy.col)){
 
             resetEnemy(
             enemy.row,
