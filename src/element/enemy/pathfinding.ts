@@ -1,8 +1,4 @@
-import {
-  enemies,
-  enemiesBehindId,
-
-} from "./enemy.ts";
+import { enemies } from "./enemy.ts";
 import { player } from "./../player/player.ts";
 import { getRingState, checkBorders } from "./../ring/ring.ts";
 import { searchHole } from "./../soil/soil.ts";

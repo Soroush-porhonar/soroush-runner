@@ -8,7 +8,6 @@ import {
 } from "./../ring/ring.ts";
 import { findNextStepBFS, notOccupied } from "./../enemy/pathfinding.ts";
 import { searchHole } from "./../soil/soil.ts";
-import {drawGold,  golds, resetGold, goldsBehindId } from "./../gold/gold.ts";
 import { player } from "./../player/player.ts";
 
 export class Enemy {
@@ -23,13 +22,12 @@ export class Enemy {
 }
 
 export let enemies = [];
-export let enemiesBehindId = [];
-let nextMoves = [];
+let enemiesBehindId = [];
+
 
 export function enemyInit() {
   enemyFall();
   moveEnemy();
-  checkGold();
 }
 
 export function drawEnemy(row: number, col: number, id: number) {
@@ -72,25 +70,18 @@ export function enemyRestoreHole(row, col) {
   }
 }
 
-function isFalling(row, col, index) {
-  const underboxId: number = getRingState(row + 1, col);
-  let result: boolean;
-  if (underboxId === 0) {
-    result = true;
-  }
-  if (searchHole(row, col)) {
-    result = false;
-  }
-  if (enemiesBehindId[index] === 5) {
-    result = false;
-  }
-  return result;
-}
+
 
 export function enemyFall() {
   enemies.forEach((enemy, eId) => {
+
     if (checkBorders(enemy.row + 1, enemy.col)) {
-      if (isFalling(enemy.row, enemy.col, eId)) {
+
+      const isFalling = getRingState(enemy.row + 1, enemy.col) === 0 &&
+       !searchHole(enemy.row, enemy.col) &&
+        enemiesBehindId[enemy.id] !== 5;
+
+      if (isFalling) {
         resetEnemy(enemy.row, enemy.col, enemy.id, enemiesBehindId[eId]);
         enemy.row = enemy.row + 1;
         drawEnemy(enemy.row, enemy.col, enemy.id);
@@ -108,6 +99,7 @@ function moveEnemy() {
     );
     if (!next) return;
 
+
     const canMove = notOccupied(next.row, next.col) &&
                       getRingState(enemy.row, enemy.col) !== 0 &&
                       !searchHole(enemy.row, enemy.col)
@@ -121,32 +113,3 @@ function moveEnemy() {
 }
 
 
-function checkGold(next) {
-  enemies.forEach((enemy, eId) => {
-    golds.forEach((gold, gId) => {
-        if(enemy.row -1 === gold.row && enemy.col === gold.col){
-            carryGold(enemy, gold);
-            };
-
-            if (enemy.row === gold.row && enemy.col === gold.col){
-                pickupGold(enemy, gold);
-                };
-
-        });
-  });
-}
-
-function pickupGold(enemy,gold){
-    resetGold(gold.row, gold.col, gold.id, 4);
-    enemiesBehindId[enemy.Id]= 0;
-    golds[gold.id].row --;
-    drawGold(golds[gold.id].row, golds[gold.id].col)
-    }
-
-function carryGold(enemy, gold){
-    resetGold(gold.row, gold.col, gold.id, goldsBehindId[gold.id]);
-
-    golds[gold.id].row = enemies[enemy.id].row - 1;
-    golds[gold.id].col = enemies[enemy.id].col;
-    drawGold(golds[gold.id].row, golds[gold.id].col)
-    }

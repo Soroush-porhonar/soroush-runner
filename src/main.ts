@@ -15,9 +15,9 @@ import { drawEnemy, Enemy, enemyInit } from "./element/enemy/enemy.ts";
 import { draw_soil, Soil } from "./element/soil/soil.ts";
 import { draw_ring } from "./element/ring/ring.ts";
 import { draw_ladder, Ladder } from "./element/ladder/ladder.ts";
-import { drawBar } from "./element/bar/bar.ts";
-import { drawGold } from "./element/gold/gold.ts";
-import { drawConc } from "./element/concrete/conc.ts";
+import { drawBar, Bar } from "./element/bar/bar.ts";
+import { drawGold, Gold, goldInit } from "./element/gold/gold.ts";
+import { drawConc, Conc } from "./element/concrete/conc.ts";
 
 $("#app").html(`
   <div class="app">
@@ -83,7 +83,7 @@ let stageDict = {
       { row: 11, col: 18, id: 1 } as Enemy,
       { row: 27, col: 16, id: 2 } as Enemy,
     ],
-    Bar: [{ row: 8, col: 10, count: 42 } as Bar],
+    Bar: [{ row: 8, col: 11, count: 42 } as Bar],
     Gold: [
       { row: 12, col: 40, id: 0 } as Gold,
       { row: 27, col: 40, id: 1 } as Gold,
@@ -133,5 +133,6 @@ stageDict["stage-1"]["Enemy"].forEach(function (item: Enemy) {
 function execute() {
   playerInit();
   enemyInit();
+  goldInit();
 }
 let interval = setInterval(execute, 200);

@@ -12,10 +12,8 @@ import { removePath, addPath } from "./../enemy/pathfinding.ts";
 import {
   drawEnemy,
   enemies,
-
   resetEnemy,
 } from "./../enemy/enemy.ts";
-import { deleteGold, golds, resetGold, goldsBehindId } from "./../gold/gold.ts";
 
 export class Player {
   row: number;
@@ -33,14 +31,6 @@ let playerImg: string = "./src/element/player/player-standing.png";
 
 export function playerInit() {
   playerFall();
-  claimGold();
-  // add player Pos to path to continue enemy search
-  if (searchHole(player.row, player.col)) {
-    addPath(player.row, player.col);
-
-  }
-    //console.log(getRingState(12,40));
-   // console.log(getRingState(11,40));
 }
 
 // change state of player effecting logic of game only
@@ -180,12 +170,4 @@ export function playerRestoreHole(row, col) {
   }
 }
 
-function claimGold() {
-  golds.forEach((gold, index) => {
-    if (gold.row === player.row && gold.col === player.col) {
-      resetGold(gold.row, gold.col, gold.id, goldsBehindId);
-      BehindPlayerId = goldsBehindId;
-      deleteGold(gold.id);
-    }
-  });
-}
+
