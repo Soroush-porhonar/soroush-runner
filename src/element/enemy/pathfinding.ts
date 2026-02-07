@@ -30,18 +30,10 @@ function isWalkable(row: number, col: number) {
 
 //check if box is not filled with player or enemies
 export function notOccupied(row: number, col: number) {
-  const isPlayer = row === player.row && col === player.col;
-  if (isPlayer) {
-    return false;
-  }
-  for (let index = 0; index < enemies.length; index++) {
-    const enemy = enemies[index];
-    let isEnemy = row === enemy.row && col === enemy.col;
-    if (isEnemy) {
-      return false;
-    }
-  }
-  return true;
+    const isPlayer = (player.row === row && player.col === col);
+    const isEnemy = enemies.some(enemy => enemy.row === row && enemy.col === col)
+    const notOccupied = !(isPlayer || isEnemy);
+  return notOccupied;
 }
 
 

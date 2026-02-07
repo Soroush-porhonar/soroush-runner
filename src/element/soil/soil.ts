@@ -1,9 +1,9 @@
 import "./soil.css";
 import $ from "jquery";
 import { addObject, removeObject } from "./../ring/ring.ts";
-import { removePath, addPath } from "./../enemy/pathfinding.ts";
+import { removePath, addPath, notOccupied } from "./../enemy/pathfinding.ts";
 import { enemyRestoreHole } from "./../enemy/enemy.ts";
-import { playerRestoreHole } from "./../player/player.ts";
+//import { playerRestoreHole } from "./../player/player.ts";
 
 export class Soil {
   row: number;
@@ -52,14 +52,28 @@ export function searchHole(row, col) {
   }
 }
 // restoring a holed soil and the path to continue player search  checking if enemy or player is in it to restore them as well
-export function handleHoleChar(row, col) {
+export async function handleHoleChar(row, col) {
   resetSoil(row, col, 0);
   addHole(row, col);
 
   setTimeout(() => {
+    waiting(row,col);
+  }, 3000);
+}
+async function waiting(row,col) {
+    await waitUntil(() => notOccupied(row -1,col));
     enemyRestoreHole(row, col);
-    playerRestoreHole(row, col);
     removeHole(row, col);
     draw_soil(row, col);
-  }, 3000);
+    }
+
+function waitUntil(conditionFn, checkEveryMs = 100) {
+  return new Promise(resolve => {
+    const interval = setInterval(() => {
+      if (conditionFn()) {
+        clearInterval(interval);
+        resolve();
+      }
+    }, checkEveryMs);
+  });
 }

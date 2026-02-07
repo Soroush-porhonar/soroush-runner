@@ -31,6 +31,7 @@ let playerImg: string = "./src/element/player/player-standing.png";
 
 export function playerInit() {
   playerFall();
+  if (searchHole(player.row, player.col)) {addPath(player.row, player.col)};
 }
 
 // change state of player effecting logic of game only
@@ -161,13 +162,14 @@ export function digRight() {
     handleHoleChar(rightAxe.row, rightAxe.col);
   }
 }
+
 //checking if player is in hole and pushing it upward on surface again
-export function playerRestoreHole(row, col) {
+/*export function playerRestoreHole(row, col) {
   if (getRingState(row, col) === 3) {
     resetPlayer(row, col, 0);
     draw_player(row - 1, col);
     removePath(row, col);
   }
-}
+}*/
 
 

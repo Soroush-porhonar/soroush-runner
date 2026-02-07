@@ -1,16 +1,6 @@
 import $ from "jquery";
-import {
-  draw_player,
-  Player,
-  playerInit,
-  goLeft,
-  goRight,
-  goDown,
-  goUp,
-  digRight,
-  digLeft,
-  visState,
-} from "./element/player/player.ts";
+import {draw_player, Player, playerInit } from "./element/player/player.ts";
+import {body_keydown, body_keyup } from "./element/player/movement.ts";
 import { drawEnemy, Enemy, enemyInit } from "./element/enemy/enemy.ts";
 import { draw_soil, Soil } from "./element/soil/soil.ts";
 import { draw_ring } from "./element/ring/ring.ts";
@@ -27,42 +17,6 @@ $("#app").html(`
 
 $("body").on("keydown", body_keydown);
 $("body").on("keyup", body_keyup);
-
-function body_keydown(e) {
-  switch (e.which) {
-    case 37: // LEFT
-      visState("walking-left");
-      goLeft();
-      break;
-    case 38: // UP
-      goUp();
-      break;
-    case 39: // RIGHT
-      visState("walking-right");
-      goRight();
-      break;
-    case 40: // DOWN
-      goDown();
-      break;
-    case 69: // dig right
-      digRight();
-      break;
-    case 81: // dig left
-      digLeft();
-      break;
-  }
-}
-
-function body_keyup(e) {
-  switch (e.which) {
-    case 37: // LEFT
-      visState("standing");
-      break;
-    case 39: // RIGHT
-      visState("standing");
-      break;
-  }
-}
 
 let stageDict = {
   "stage-1": {
@@ -83,7 +37,7 @@ let stageDict = {
       { row: 11, col: 18, id: 1 } as Enemy,
       { row: 27, col: 16, id: 2 } as Enemy,
     ],
-    Bar: [{ row: 8, col: 11, count: 42 } as Bar],
+    Bar: [{ row: 8, col: 11, count: 39 } as Bar],
     Gold: [
       { row: 12, col: 40, id: 0 } as Gold,
       { row: 27, col: 40, id: 1 } as Gold,

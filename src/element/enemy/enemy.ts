@@ -37,6 +37,7 @@ export function drawEnemy(row: number, col: number, id: number) {
     .attr("src", "src/element/enemy/enemy-standing.png") // Set the source of the image
     .addClass("enemy");
   const enemy: Enemy = new Enemy(row, col, id);
+  //update enemy new pos in array of enemies
   enemies[id] = enemy;
   enemiesBehindId[id] = getRingState(row, col);
   addObject($enemy, row, col, OBJECT_ID);
@@ -51,7 +52,7 @@ export function resetEnemy(
   const $enemy = $("#enemy" + id).remove();
   removeObject($enemy, row, col, targetId);
 }
-
+//find enemy id by position
 export function findEnemyId(row, col) {
   let id: number;
   enemies.forEach((enemy, index) => {
@@ -62,6 +63,7 @@ export function findEnemyId(row, col) {
   return id;
 }
 
+//check and  restore and draw enemy from hole
 export function enemyRestoreHole(row, col) {
   if (getRingState(row, col) === 4) {
     const id = findEnemyId(row, col);
@@ -98,7 +100,6 @@ function moveEnemy() {
       { row: player.row, col: player.col }
     );
     if (!next) return;
-
 
     const canMove = notOccupied(next.row, next.col) &&
                       getRingState(enemy.row, enemy.col) !== 0 &&
