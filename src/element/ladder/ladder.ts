@@ -17,6 +17,5 @@ export function draw_ladder(row: number, col: number) {
   const $ladder = $("<div></div>").addClass("ladder");
 
   addObject($ladder, row, col, OBJECT_ID);
-  addPath(row ,col )
+  addPath(row, col);
 }
-

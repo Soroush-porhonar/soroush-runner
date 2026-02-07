@@ -2,25 +2,23 @@ import "./ring.css";
 import $ from "jquery";
 
 const ROWS = 30;
-const COLS = 90;
+const COLS = 60;
 const RING: number[][] = Array.from({ length: ROWS }, () =>
   Array(COLS).fill(0)
 );
 
-
 let $RING;
 
-
-export function checkBorders(row, col){
-    if (row < 0 || row >= ROWS) {
-        //console.error("Invalid Object request: " + row + " is more than " + ROWS);
-        return false;
-    }
-    if (col < 0 || col >= COLS) {
-        //console.error("Invalid Object request: " + col + " is more than " + COLS);
-        return false;
-    }
-    return true
+export function checkBorders(row, col) {
+  if (row < 0 || row >= ROWS) {
+    //console.error("Invalid Object request: " + row + " is more than " + ROWS);
+    return false;
+  }
+  if (col < 0 || col >= COLS) {
+    //console.error("Invalid Object request: " + col + " is more than " + COLS);
+    return false;
+  }
+  return true;
 }
 
 export function draw_ring(parent: HTMLDivElement): HTMLDivElement {
@@ -30,27 +28,24 @@ export function draw_ring(parent: HTMLDivElement): HTMLDivElement {
   return $ring[0];
 }
 
-
 export function removeObject(
   object: HTMLDivElement,
   row: number,
   col: number,
   objId: number
 ) {
-  checkBorders(row, col)
+  checkBorders(row, col);
 
   RING[row][col] = objId;
 }
 
-
 export function addObject(
-
   object: HTMLDivElement,
   row: number,
   col: number,
   objId: number
 ) {
-  checkBorders(row, col)
+  checkBorders(row, col);
 
   // logic
   RING[row][col] = objId;
@@ -72,11 +67,5 @@ export function addObject(
 }
 
 export function getRingState(row: number, col: number) {
-        return RING[row][col];
-
-
-
-
-
-
+  return RING[row][col];
 }

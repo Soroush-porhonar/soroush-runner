@@ -9,7 +9,6 @@ export class Bar {
   constructor(row: number, col: number) {
     this.row = row;
     this.col = col;
-
   }
 }
 // draw bar , add object id, add path
@@ -20,5 +19,5 @@ export function drawBar(row: number, col: number) {
     .attr("id", "bar" + id)
     .addClass("bar");
   addObject($bar, row, col, OBJECT_ID);
-  addPath(row ,col )
+  addPath(row, col);
 }

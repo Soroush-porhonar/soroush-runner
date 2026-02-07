@@ -2,17 +2,16 @@ import $ from "jquery";
 import {
   draw_player,
   Player,
-  playerFall,
+  playerInit,
   goLeft,
   goRight,
   goDown,
   goUp,
   digRight,
   digLeft,
-  visState
+  visState,
 } from "./element/player/player.ts";
-import {moveEnemy} from "./element/enemy/pathfinding.ts";
-import { drawEnemy, Enemy, enemyFall } from "./element/enemy/enemy.ts";
+import { drawEnemy, Enemy, enemyInit } from "./element/enemy/enemy.ts";
 import { draw_soil, Soil } from "./element/soil/soil.ts";
 import { draw_ring } from "./element/ring/ring.ts";
 import { draw_ladder, Ladder } from "./element/ladder/ladder.ts";
@@ -20,13 +19,14 @@ import { drawBar } from "./element/bar/bar.ts";
 import { drawGold } from "./element/gold/gold.ts";
 import { drawConc } from "./element/concrete/conc.ts";
 
-
 $("#app").html(`
   <div class="app">
 
   </div>
 `);
 
+$("body").on("keydown", body_keydown);
+$("body").on("keyup", body_keyup);
 
 function body_keydown(e) {
   switch (e.which) {
@@ -54,49 +54,41 @@ function body_keydown(e) {
 }
 
 function body_keyup(e) {
-    switch (e.which) {
-        case 37: // LEFT
-          visState("standing")
-          break;
-        case 39: // RIGHT
-          visState("standing")
-          break;
-    }
+  switch (e.which) {
+    case 37: // LEFT
+      visState("standing");
+      break;
+    case 39: // RIGHT
+      visState("standing");
+      break;
+  }
 }
-$("body").on("keydown", body_keydown);
-$("body").on("keyup", body_keyup);
 
 let stageDict = {
   "stage-1": {
     Soil: [
-      { row: 2, col: 5, count: 10 } as Soil,
-      { row: 15, col: 10, count: 27 } as Soil,
-      { row: 28, col: 0, count: 90 } as Soil,
-      { row: 13, col: 50, count: 30 } as Soil,
+      { row: 2, col: 5, count: 7 } as Soil,
+      { row: 15, col: 5, count: 13 } as Soil,
+      { row: 28, col: 0, count: 60 } as Soil,
+      { row: 13, col: 25, count: 30 } as Soil,
     ],
     Ladder: [
-      { row: 15, col: 25, count: 13 } as Ladder,
-      { row: 2, col: 12, count: 13 } as Ladder,
-      { row: 2, col: 55, count: 11 } as Ladder,
+      { row: 15, col: 14, count: 13 } as Ladder,
+      { row: 2, col: 10, count: 13 } as Ladder,
+      { row: 2, col: 50, count: 11 } as Ladder,
     ],
-    Player: [
-        { row: 10, col: 15 } as Player
-    ],
+    Player: [{ row: 10, col: 15 } as Player],
     Enemy: [
       { row: 25, col: 12, id: 0 } as Enemy,
       { row: 11, col: 18, id: 1 } as Enemy,
       { row: 27, col: 16, id: 2 } as Enemy,
-      /*{ row: 14, col: 20, id: 3 } as Enemy,*/
     ],
-    Bar: [
-          { row: 10, col: 13, count: 42 } as Bar,
-    ],
+    Bar: [{ row: 8, col: 10, count: 42 } as Bar],
     Gold: [
-          { row: 12, col: 63 } as Gold,
+      { row: 12, col: 40, id: 0 } as Gold,
+      { row: 27, col: 40, id: 1 } as Gold,
     ],
-    Conc: [
-          { row: 29, col: 0, count: 90 } as Conc,
-    ],
+    Conc: [{ row: 29, col: 0, count: 90 } as Conc],
   },
 };
 
@@ -108,13 +100,11 @@ stageDict["stage-1"]["Soil"].forEach(function (item: Soil) {
   }
 });
 
-
 stageDict["stage-1"]["Conc"].forEach(function (item: Conc) {
   for (let index = 0; index < item.count; index++) {
     drawConc(item.row, item.col + index);
   }
 });
-
 
 stageDict["stage-1"]["Ladder"].forEach(function (item: Ladder) {
   for (let index = 0; index < item.count; index++) {
@@ -129,7 +119,7 @@ stageDict["stage-1"]["Bar"].forEach(function (item: Bar) {
 });
 
 stageDict["stage-1"]["Gold"].forEach(function (item: Gold) {
-    drawGold(item.row, item.col);
+  drawGold(item.row, item.col, item.id);
 });
 
 stageDict["stage-1"]["Player"].forEach(function (item: Player) {
@@ -140,13 +130,8 @@ stageDict["stage-1"]["Enemy"].forEach(function (item: Enemy) {
   drawEnemy(item.row, item.col, item.id);
 });
 
-
-
-
 function execute() {
-  playerFall();
-  enemyFall();
-  moveEnemy();
-
+  playerInit();
+  enemyInit();
 }
 let interval = setInterval(execute, 200);

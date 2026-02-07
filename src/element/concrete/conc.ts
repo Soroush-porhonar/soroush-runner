@@ -8,7 +8,6 @@ export class Conc {
   constructor(row: number, col: number) {
     this.row = row;
     this.col = col;
-
   }
 }
 
@@ -19,5 +18,4 @@ export function drawConc(row: number, col: number) {
     .attr("id", "conc" + id)
     .addClass("conc");
   addObject($conc, row, col, OBJECT_ID);
-
 }

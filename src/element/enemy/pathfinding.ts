@@ -1,114 +1,61 @@
-import { enemies, enemiesBehindId, drawEnemy, resetEnemy, findEnemyId, isFalling} from "./enemy.ts";
-import { player} from "./../player/player.ts";
-import { getRingState, checkBorders} from "./../ring/ring.ts";
+import {
+  enemies,
+  enemiesBehindId,
+
+} from "./enemy.ts";
+import { player } from "./../player/player.ts";
+import { getRingState, checkBorders } from "./../ring/ring.ts";
 import { searchHole } from "./../soil/soil.ts";
 
 const ROWS = 30;
-const COLS = 90;
+const COLS = 60;
 const PATHS: number[][] = Array.from({ length: ROWS }, () =>
   Array(COLS).fill(false)
 );
 
-
-
-
-
-export function removePath(
-  row: number,
-  col: number
-) {
-  checkBorders(row,col);
+export function removePath(row: number, col: number) {
+  checkBorders(row, col);
   // logic
   PATHS[row][col] = false;
 }
 
-
-
-
-export function addPath(
-  row: number,
-  col: number
-) {
-  checkBorders(row,col);
+export function addPath(row: number, col: number) {
+  checkBorders(row, col);
   // logic
   PATHS[row][col] = true;
 }
 
-
 function isWalkable(row: number, col: number) {
-    if (checkBorders(row,col)){
-        return PATHS[row][col] === true;
-    }
-    return false;
+  if (checkBorders(row, col)) {
+    return PATHS[row][col] === true;
+  }
+  return false;
 }
-
 
 //check if box is not filled with player or enemies
-function notOccupied(row: number, col: number) {
-    const isPlayer = (row === player.row && col === player.col)
-    if (isPlayer){
-        return false
-        }
-    for (let index = 0; index < enemies.length; index++) {
-        const enemy = enemies[index];
-        let isEnemy = (row === enemy.row && col === enemy.col);
-        if(isEnemy){
-            return false
-            }
-        };
-    return true;
+export function notOccupied(row: number, col: number) {
+  const isPlayer = row === player.row && col === player.col;
+  if (isPlayer) {
+    return false;
+  }
+  for (let index = 0; index < enemies.length; index++) {
+    const enemy = enemies[index];
+    let isEnemy = row === enemy.row && col === enemy.col;
+    if (isEnemy) {
+      return false;
+    }
+  }
+  return true;
 }
-
-
-
-
-
-
-//for each enemy caculate path to player, check if it should move
-export function moveEnemy() {
-
-    enemies.forEach((enemy, index) => {
-
-        const next = findNextStepBFS(
-          { row: enemy.row, col: enemy.col },
-          { row: player.row, col: player.col }
-        );
-
-
-        if (!next) return;
-
-        if (notOccupied(next.row,next.col) && getRingState(enemy.row , enemy.col ) !== 0 && !searchHole(enemy.row , enemy.col)){
-
-            resetEnemy(
-            enemy.row,
-            enemy.col,
-            enemy.id,
-            enemiesBehindId[index]
-            );
-
-            enemy.row = next.row;
-            enemy.col = next.col;
-
-            drawEnemy(enemy.row, enemy.col, enemy.id);}
-
-      });
-}
-
 
 
 
 type Pos = { row: number; col: number };
 type Node = Pos & { parent: Node | null };
 
-
-function findNextStepBFS(
-  start: Pos,
-  goal: Pos
-): Pos | null {
+export function findNextStepBFS(start: Pos, goal: Pos): Pos | null {
   const queue: Node[] = [];
-  const visited = Array.from({ length: ROWS }, () =>
-    Array(COLS).fill(false)
-  );
+  const visited = Array.from({ length: ROWS }, () => Array(COLS).fill(false));
 
   queue.push({ ...start, parent: null });
   visited[start.row][start.col] = true;
@@ -125,10 +72,7 @@ function findNextStepBFS(
   while (queue.length > 0) {
     const current = queue.shift()!;
 
-    if (
-      current.row === goal.row &&
-      current.col === goal.col
-    ) {
+    if (current.row === goal.row && current.col === goal.col) {
       endNode = current;
       break;
     }
@@ -157,6 +101,4 @@ function findNextStepBFS(
     cur = cur.parent;
   }
   return { row: cur.row, col: cur.col };
-
 }
-
