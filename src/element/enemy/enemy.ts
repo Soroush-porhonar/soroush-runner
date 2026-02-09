@@ -6,7 +6,7 @@ import {
   getRingState,
   checkBorders,
 } from "./../ring/ring.ts";
-import { findNextStepBFS, notOccupied } from "./../enemy/pathfinding.ts";
+import { findNextStepBFS, notOccupied, getMapId } from "./../enemy/pathfinding.ts";
 import { searchHole } from "./../soil/soil.ts";
 import { player } from "./../player/player.ts";
 
@@ -22,11 +22,10 @@ export class Enemy {
 }
 
 export let enemies = [];
-let enemiesBehindId = [];
+
 
 
 export function enemyInit() {
-  enemyFall();
   moveEnemy();
 }
 
@@ -39,8 +38,9 @@ export function drawEnemy(row: number, col: number, id: number) {
   const enemy: Enemy = new Enemy(row, col, id);
   //update enemy new pos in array of enemies
   enemies[id] = enemy;
-  enemiesBehindId[id] = getRingState(row, col);
+
   addObject($enemy, row, col, OBJECT_ID);
+
 }
 
 export function resetEnemy(
@@ -51,6 +51,7 @@ export function resetEnemy(
 ) {
   const $enemy = $("#enemy" + id).remove();
   removeObject($enemy, row, col, targetId);
+
 }
 //find enemy id by position
 export function findEnemyId(row, col) {
@@ -73,42 +74,34 @@ export function enemyRestoreHole(row, col) {
 }
 
 
-
-export function enemyFall() {
-  enemies.forEach((enemy, eId) => {
-
-    if (checkBorders(enemy.row + 1, enemy.col)) {
-
-      const isFalling = getRingState(enemy.row + 1, enemy.col) === 0 &&
-       !searchHole(enemy.row, enemy.col) &&
-        enemiesBehindId[enemy.id] !== 5;
-
-      if (isFalling) {
-        resetEnemy(enemy.row, enemy.col, enemy.id, enemiesBehindId[eId]);
-        enemy.row = enemy.row + 1;
-        drawEnemy(enemy.row, enemy.col, enemy.id);
-      }
-    }
-  });
-}
-
 //for each enemy calculate path to player, check if it should move
 function moveEnemy() {
   enemies.forEach((enemy, index) => {
-     const next = findNextStepBFS(
-      { row: enemy.row, col: enemy.col },
-      { row: player.row, col: player.col }
-    );
-    if (!next) return;
 
-    const canMove = notOccupied(next.row, next.col) &&
-                      getRingState(enemy.row, enemy.col) !== 0 &&
-                      !searchHole(enemy.row, enemy.col)
-    if (canMove) {
-      resetEnemy(enemy.row, enemy.col, enemy.id, enemiesBehindId[index]);
-      enemy.row = next.row;
-      enemy.col = next.col;
-      drawEnemy(enemy.row, enemy.col, enemy.id);
+      if (notOccupied(enemy.row + 1, enemy.col) && searchHole(enemy.row + 1, enemy.col)){
+          resetEnemy(enemy.row, enemy.col, enemy.id, getMapId(enemy.row, enemy.col));
+          enemy.row ++;
+          drawEnemy(enemy.row, enemy.col, enemy.id);
+          return;
+      }
+      else{
+          const next = findNextStepBFS(
+                { row: enemy.row, col: enemy.col },
+                { row: player.row, col: player.col }
+                 );
+
+          if (!next) return;
+
+          if (notOccupied(next.row, next.col) && !searchHole(enemy.row, enemy.col)) {
+
+            resetEnemy(enemy.row, enemy.col, enemy.id, getMapId(enemy.row, enemy.col));
+            enemy.row = next.row;
+            enemy.col = next.col;
+            drawEnemy(enemy.row, enemy.col, enemy.id);
+          }
+
+
+
     }
   });
 }

@@ -9,6 +9,7 @@ const RING: number[][] = Array.from({ length: ROWS }, () =>
 
 let $RING;
 
+
 export function checkBorders(row, col) {
   if (row < 0 || row >= ROWS) {
     //console.error("Invalid Object request: " + row + " is more than " + ROWS);
@@ -45,7 +46,7 @@ export function addObject(
   col: number,
   objId: number
 ) {
-  checkBorders(row, col);
+  if (!checkBorders(row, col)) return;
 
   // logic
   RING[row][col] = objId;
@@ -67,5 +68,7 @@ export function addObject(
 }
 
 export function getRingState(row: number, col: number) {
-  return RING[row][col];
+    if (checkBorders(row, col )){
+        return RING[row][col];
+        }
 }

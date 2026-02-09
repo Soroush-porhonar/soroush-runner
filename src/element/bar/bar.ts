@@ -1,7 +1,8 @@
 import "./bar.css";
 import $ from "jquery";
 import { addObject, removeObject } from "./../ring/ring.ts";
-import { removePath, addPath } from "./../enemy/pathfinding.ts";
+import { addMap } from "./../enemy/pathfinding.ts";
+
 
 export class Bar {
   row: number;
@@ -19,5 +20,5 @@ export function drawBar(row: number, col: number) {
     .attr("id", "bar" + id)
     .addClass("bar");
   addObject($bar, row, col, OBJECT_ID);
-  addPath(row, col);
+  addMap(row, col, OBJECT_ID);
 }

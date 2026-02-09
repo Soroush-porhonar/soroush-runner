@@ -5,34 +5,50 @@ import { searchHole } from "./../soil/soil.ts";
 
 const ROWS = 30;
 const COLS = 60;
-const PATHS: number[][] = Array.from({ length: ROWS }, () =>
-  Array(COLS).fill(false)
+const Map: number[][] = Array.from({ length: ROWS }, () =>
+  Array(COLS).fill(0)
 );
+export function addMap(row: number, col: number, objId: number){
+    if (checkBorders(row, col)){
+       // logic
+       Map[row][col] = objId; }
+}
+export function getMapId (row: number, col: number){
+    if(checkBorders(row, col)){
+        return Map[row][col];
+        }
+    }
 
-export function removePath(row: number, col: number) {
+
+export function removeMap(
+  row: number,
+  col: number,
+  objId: number
+) {
   checkBorders(row, col);
-  // logic
-  PATHS[row][col] = false;
+
+  Map[row][col] = objId;
 }
 
-export function addPath(row: number, col: number) {
-  checkBorders(row, col);
-  // logic
-  PATHS[row][col] = true;
+function isEmpty(r: number, c: number): boolean {
+  return Map[r][c] === 0;
+}
+function isSolid(r: number, c: number): boolean {
+  return Map[r][c] === 1 || Map[r][c] === 7 || Map[r - 1][c] === 5 || Map[r][c] === 2 ;
+}
+function isLadder(r: number, c: number): boolean {
+  return Map[r][c] === 2;
+}
+function isBar(r: number, c: number): boolean {
+  return Map[r][c] === 5; // your bar matrix
 }
 
-function isWalkable(row: number, col: number) {
-  if (checkBorders(row, col)) {
-    return PATHS[row][col] === true;
-  }
-  return false;
-}
-
-//check if box is not filled with player or enemies
+//check if Pos in RIng is not filled with player or enemies
 export function notOccupied(row: number, col: number) {
     const isPlayer = (player.row === row && player.col === col);
     const isEnemy = enemies.some(enemy => enemy.row === row && enemy.col === col)
     const notOccupied = !(isPlayer || isEnemy);
+    //console.log(isEnemy)
   return notOccupied;
 }
 
@@ -41,19 +57,64 @@ export function notOccupied(row: number, col: number) {
 type Pos = { row: number; col: number };
 type Node = Pos & { parent: Node | null };
 
+function getNeighbors(node: Pos): Pos[] {
+  const r = node.row;
+  const c = node.col;
+  const neighbors: Pos[] = [];
+
+  if(!checkBorders(r,c)) return;
+  /* ========= FORCED FALL (not ladder, not bar) ========= */
+  if (
+    (isEmpty(r + 1,c) || isBar(r + 1,c)) &&
+    !searchHole(r, c) &&
+    !isLadder(r,c) &&
+    !isBar(r,c)
+  ) {
+    neighbors.push({ row: r + 1, col: c });
+    return neighbors;
+  }
+
+  /* ========= BAR MOVEMENT ========= */
+  if (isBar(r, c)) {
+    // left / right on bar
+    if (isEmpty(r, c - 1) || isBar(r, c - 1) || isLadder(r, c - 1)) neighbors.push({ row: r, col: c - 1 });
+    if (isEmpty(r, c + 1) || isBar(r, c + 1) || isLadder(r, c + 1)) neighbors.push({ row: r, col: c + 1 });
+
+    // drop from bar
+    if (isEmpty(r + 1, c)) {
+      neighbors.push({ row: r + 1, col: c });
+    }
+
+    return neighbors; // bar blocks other logic
+  }
+
+  /* ========= NORMAL GROUND / LADDER ========= */
+  const grounded = isSolid(r + 1, c) || isLadder(r, c);
+  if (grounded) {
+    if (isEmpty(r, c - 1) || isLadder(r, c - 1) || isBar(r, c - 1)) neighbors.push({ row: r, col: c - 1 });
+    if (isEmpty(r, c + 1) || isLadder(r, c + 1) || isBar(r, c + 1)) neighbors.push({ row: r, col: c + 1 });
+  }
+
+  /* ========= UP (ladder only) ========= */
+
+  if (isLadder(r, c) || isLadder(r + 1, c) ) {
+    neighbors.push({ row: r - 1, col: c });
+  }
+
+  return neighbors;
+}
+
+
+
 export function findNextStepBFS(start: Pos, goal: Pos): Pos | null {
   const queue: Node[] = [];
-  const visited = Array.from({ length: ROWS }, () => Array(COLS).fill(false));
+  const visited = Array.from({ length: ROWS }, () =>
+    Array(COLS).fill(false)
+  );
+
 
   queue.push({ ...start, parent: null });
   visited[start.row][start.col] = true;
-
-  const directions = [
-    { row: 0, col: 1 },
-    { row: 1, col: 0 },
-    { row: 0, col: -1 },
-    { row: -1, col: 0 },
-  ];
 
   let endNode: Node | null = null;
 
@@ -65,17 +126,16 @@ export function findNextStepBFS(start: Pos, goal: Pos): Pos | null {
       break;
     }
 
-    for (const d of directions) {
-      const nr = current.row + d.row;
-      const nc = current.col + d.col;
+    const neighbors = getNeighbors(current);
 
-      if (!isWalkable(nr, nc)) continue;
-      if (visited[nr][nc]) continue;
+    for (const n of neighbors) {
+      if(!checkBorders(n.row, n.col)) continue;
+      if (visited[n.row][n.col]) continue;
 
-      visited[nr][nc] = true;
+      visited[n.row][n.col] = true;
       queue.push({
-        row: nr,
-        col: nc,
+        row: n.row,
+        col: n.col,
         parent: current,
       });
     }
@@ -83,7 +143,7 @@ export function findNextStepBFS(start: Pos, goal: Pos): Pos | null {
 
   if (!endNode) return null;
 
-  // Backtrack to find first step
+  /* ===== backtrack to first step ===== */
   let cur = endNode;
   while (cur.parent && cur.parent.parent) {
     cur = cur.parent;

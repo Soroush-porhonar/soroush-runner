@@ -1,6 +1,7 @@
 import "./conc.css";
 import $ from "jquery";
 import { addObject, removeObject } from "./../ring/ring.ts";
+import { addMap } from "./../enemy/pathfinding.ts";
 
 export class Conc {
   row: number;
@@ -18,4 +19,5 @@ export function drawConc(row: number, col: number) {
     .attr("id", "conc" + id)
     .addClass("conc");
   addObject($conc, row, col, OBJECT_ID);
+  addMap(row, col, OBJECT_ID);
 }

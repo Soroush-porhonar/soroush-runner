@@ -3,6 +3,7 @@ import "./gold.css";
 import { addObject, removeObject, getRingState } from "./../ring/ring.ts";
 import { enemies} from "./../enemy/enemy.ts";
 import { player} from "./../player/player.ts";
+import { getMapId } from "./../enemy/pathfinding.ts";
 
 export class Gold {
   row: number;
@@ -16,7 +17,7 @@ export class Gold {
 }
 
 export let golds = [];
-export let goldsBehindId = [];
+
 export let goldCarriers = [];
 
 
@@ -33,7 +34,7 @@ export function drawGold(row: number, col: number, id: number) {
     .addClass("gold");
   const gold: Gold = new Gold(row, col, id);
   golds[id] = gold;
-  goldsBehindId[id] = getRingState(row, col);
+
   addObject($gold, row, col, OBJECT_ID);
 }
 
@@ -55,7 +56,7 @@ export function deleteGold(id) {
 function claimGold() {
   golds.forEach((gold, index) => {
     if (gold.row === player.row && gold.col === player.col) {
-      resetGold(gold.row, gold.col, gold.id, goldsBehindId[gold.id]);
+      resetGold(gold.row, gold.col, gold.id, getMapId(gold.row, gold.col));
       deleteGold(gold.id);
     }
   });
@@ -76,7 +77,7 @@ function checkGold() {
 }
 
 function pickupGold(enemy,gold){
-    resetGold(gold.row, gold.col, gold.id, 4);
+    resetGold(gold.row, gold.col, gold.id, getMapId(gold.row, gold.col));
     golds[gold.id].row --;
     drawGold(golds[gold.id].row, golds[gold.id].col, gold.id)
     const carrier = {goldId:gold.id, enemyId:enemy.id}
@@ -85,8 +86,6 @@ function pickupGold(enemy,gold){
     }
 
 function carryGold(enemy, gold){
-    resetGold(gold.row, gold.col, gold.id, goldsBehindId[gold.id]);
-    golds[gold.id].row = enemy.row -1;
-    golds[gold.id].col = enemy.col;
-    drawGold(golds[gold.id].row, golds[gold.id].col, gold.id)
+    resetGold(gold.row, gold.col, gold.id, getMapId(gold.row, gold.col));
+    drawGold(enemy.row -1, enemy.col, gold.id)
     }

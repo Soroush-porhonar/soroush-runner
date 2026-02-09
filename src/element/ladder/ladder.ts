@@ -1,7 +1,8 @@
 import "./ladder.css";
 import $ from "jquery";
 import { addObject } from "./../ring/ring.ts";
-import { addPath } from "./../enemy/pathfinding.ts";
+import { addMap } from "./../enemy/pathfinding.ts";
+
 
 export class Ladder {
   col: number;
@@ -17,5 +18,5 @@ export function draw_ladder(row: number, col: number) {
   const $ladder = $("<div></div>").addClass("ladder");
 
   addObject($ladder, row, col, OBJECT_ID);
-  addPath(row, col);
+  addMap(row, col, OBJECT_ID);
 }

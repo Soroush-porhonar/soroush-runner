@@ -8,7 +8,7 @@ import {
   handleHoleChar,
   searchHole,
 } from "./../soil/soil.ts";
-import { removePath, addPath } from "./../enemy/pathfinding.ts";
+import {getMapId} from "./../enemy/pathfinding.ts";
 import {
   drawEnemy,
   enemies,
@@ -25,13 +25,13 @@ export class Player {
 }
 
 export let player: Player;
-let BehindPlayerId: number;
+
 //current image for player
-let playerImg: string = "./src/element/player/player-standing.png";
+let playerImg: string = "src/element/player/player-images/player-standing.png";
 
 export function playerInit() {
   playerFall();
-  if (searchHole(player.row, player.col)) {addPath(player.row, player.col)};
+
 }
 
 // change state of player effecting logic of game only
@@ -39,7 +39,7 @@ function changeState() {
   let state: string;
   const underboxId: number = getRingState(player.row + 1, player.col);
 
-  if (underboxId === 0 || underboxId === 5) {
+  if (underboxId === 0 || underboxId === 5 || underboxId === 6) {
     state = "falling";
   }
   //check player not be in hole
@@ -49,10 +49,10 @@ function changeState() {
   if (underboxId === 1 || underboxId === 2 || underboxId === 4) {
     state = "standing";
   }
-  if (BehindPlayerId === 2) {
+  if (getMapId(player.row, player.col) === 2) {
     state = "climbing";
   }
-  if (BehindPlayerId === 5) {
+  if (getMapId(player.row, player.col) === 5) {
     state = "hanging";
   }
 
@@ -61,17 +61,44 @@ function changeState() {
 
 //updating image based on keydown and up for player visual
 export function visState(input) {
-  if (input === "standing") {
-    playerImg = "./src/element/player/player-standing.png";
+    const state = changeState()
+
+  if (input === "still" ) {
+      if (state === "hanging"){
+          playerImg = "./src/element/player/player-images/player-hanging-still.png";
+          }
+      if(state === "standing"){
+          playerImg = "./src/element/player/player-images/player-standing.png";
+          }
+      //return;
   }
-  if (input === "walking-left") {
-    playerImg = "./src/element/player/player-walk-left.png";
+  if (input === "left" ) {
+      if (state === "hanging"){
+          playerImg = "./src/element/player/player-images/player-hanging-left.png";
+          }
+      if (state === "standing"){
+          playerImg = "./src/element/player/player-images/player-walk-left.png";
+          }
+      //return;
   }
-  if (input === "walking-right") {
-    playerImg = "./src/element/player/player-walk-right.png";
+  if (input === "right") {
+      if (state === "hanging"){
+          playerImg = "./src/element/player/player-images/player-hanging-right.png";
+          }
+      if (state === "standing"){
+          playerImg = "./src/element/player/player-images/player-walk-right.png";
+          }
+      //return;
   }
+  if ((input === "up" || input === "down") && state === "climbing") {
+      playerImg = "./src/element/player/player-images/player-climbing.png";
+  }
+  if(state === "falling"){
+      playerImg = "./src/element/player/player-images/player-hanging-still.png";
+      }
+
   //forcing a redraw to update the image on spot not after a move
-  resetPlayer(player.row, player.col, BehindPlayerId);
+  resetPlayer(player.row, player.col, getMapId(player.row, player.col));
   draw_player(player.row, player.col);
 }
 
@@ -90,13 +117,13 @@ export function draw_player(row: number, col: number) {
     .addClass("player");
 
   // save id of Box which player is in now, to restore it after player moved
-  BehindPlayerId = getRingState(row, col);
+
   addObject($player, row, col, OBJECT_ID);
 }
 
 export function playerFall() {
   if (changeState() == "falling") {
-    resetPlayer(player.row, player.col, BehindPlayerId);
+    resetPlayer(player.row, player.col, getMapId(player.row, player.col));
     player.row++;
     draw_player(player.row, player.col);
   }
@@ -110,7 +137,7 @@ export function goLeft() {
       changeState() === "hanging") &
     (leftboxId == 0 || leftboxId == 2 || leftboxId == 5 || leftboxId == 6)
   ) {
-    resetPlayer(player.row, player.col, BehindPlayerId);
+    resetPlayer(player.row, player.col, getMapId(player.row, player.col));
     player.col = player.col - 1;
     draw_player(player.row, player.col);
   }
@@ -124,7 +151,7 @@ export function goRight() {
       changeState() === "hanging") &
     (rightboxId == 0 || rightboxId == 2 || rightboxId == 5 || rightboxId == 6)
   ) {
-    resetPlayer(player.row, player.col, BehindPlayerId);
+    resetPlayer(player.row, player.col, getMapId(player.row, player.col));
     player.col = player.col + 1;
     draw_player(player.row, player.col);
   }
@@ -132,7 +159,7 @@ export function goRight() {
 
 export function goUp() {
   if (changeState() == "climbing") {
-    resetPlayer(player.row, player.col, BehindPlayerId);
+    resetPlayer(player.row, player.col, getMapId(player.row, player.col));
     player.row--;
     draw_player(player.row, player.col);
   }
@@ -141,7 +168,7 @@ export function goUp() {
 export function goDown() {
   const underboxId: number = getRingState(player.row + 1, player.col);
   if (underboxId == 2 || changeState() === "hanging") {
-    resetPlayer(player.row, player.col, BehindPlayerId);
+    resetPlayer(player.row, player.col, getMapId(player.row, player.col));
     player.row++;
     draw_player(player.row, player.col);
   }
