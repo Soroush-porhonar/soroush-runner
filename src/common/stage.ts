@@ -1,3 +1,4 @@
+import $ from "jquery";
 import { draw_soil, Soil } from "./../element/soil/soil.ts";
 import { draw_ladder, Ladder } from "./../element/ladder/ladder.ts";
 import { drawEnemy, Enemy, enemyInit } from "./../element/enemy/enemy.ts";
@@ -5,6 +6,7 @@ import { drawBar, Bar } from "./../element/bar/bar.ts";
 import {draw_player, Player, playerInit } from "./../element/player/player.ts";
 import { drawGold, Gold, goldInit } from "./../element/gold/gold.ts";
 import { drawConc, Conc } from "./../element/concrete/conc.ts";
+import { draw_ring , createZeroRing } from "./../element/ring/ring.ts";
 let stageDict = {
   "stage-1": {
     Soil: [
@@ -95,4 +97,10 @@ export function drawWLadder(){
         });
 
     }
-
+export function LevelInit(){
+    $('#ring').empty();
+    createZeroRing();
+    enemyInit();
+    goldInit();
+    drawStage();
+}

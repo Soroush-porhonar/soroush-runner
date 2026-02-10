@@ -48,3 +48,57 @@ table {
 	border-collapse: collapse;
 	border-spacing: 0;
 }
+
+#mobile-controls {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10000;
+}
+
+#mobile-controls button {
+  pointer-events: auto;
+  width: 35px;
+  height: 35px;
+  background: rgba(255,255,255,0.25);
+  border: 2px solid rgba(255,255,255,0.45);
+  color: white;
+  font-size: 20px;
+  border-radius: 6px;
+  touch-action: none;
+}
+
+.dpad {
+  position: absolute;
+  bottom: 28px;
+  left: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+}
+
+.spacer {
+  width: 46px;
+}
+
+.actions {
+  position: absolute;
+  bottom: 42px;
+  right: 28px;
+  display: flex;
+  gap: 12px;
+}
+
+.actions button {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  font-weight: bold;
+}
+

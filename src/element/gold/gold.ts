@@ -16,15 +16,20 @@ export class Gold {
   }
 }
 
-export let golds = [];
 
-export let goldCarriers = [];
-
+export let golds ;
+export let goldCarriers ;
 
 export function goldInit(){
+    golds = [];
+    goldCarriers = [];
+    }
+
+
+export function goldRepeat(){
     checkGold();
     claimGold();
-    }
+}
 
 export function drawGold(row: number, col: number, id: number) {
   const OBJECT_ID = 6;

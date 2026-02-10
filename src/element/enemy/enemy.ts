@@ -21,11 +21,14 @@ export class Enemy {
   }
 }
 
-export let enemies = [];
+
+export let enemies ;
+export function enemyInit(){
+    enemies = [];
+    }
 
 
-
-export function enemyInit() {
+export function enemyrepeat() {
   moveEnemy();
 }
 
@@ -97,9 +100,6 @@ function moveEnemy() {
             enemy.col = next.col;
             drawEnemy(enemy.row, enemy.col, enemy.id);
           }
-
-
-
     }
   });
 }
