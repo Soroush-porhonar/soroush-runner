@@ -32,7 +32,7 @@ export function resetSoil(row: number, col: number, targetId: number) {
 
 }
 
-export const Holes: Soil[] = [];
+/*export const Holes: Soil[] = [];
 
 export function addHole(row, col) {
   Holes.push(new Soil(row, col));
@@ -55,7 +55,6 @@ export function searchHole(row, col) {
 // restoring a holed soil and the path to continue player search  checking if enemy or player is in it to restore them as well
 export async function handleHoleChar(row, col) {
   resetSoil(row, col, 0);
-
   //removeMap(row, col, 0);
   addHole(row, col);
 
@@ -81,4 +80,4 @@ function waitUntil(conditionFn, checkEveryMs = 100) {
       }
     }, checkEveryMs);
   });
-}
+}*/

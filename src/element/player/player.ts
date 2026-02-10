@@ -1,12 +1,11 @@
 import "./player.css";
 import $ from "jquery";
 import { addObject, removeObject, getRingState } from "./../ring/ring.ts";
+import { handleHoleChar } from "./../hole/hole.ts";
 import {
   Soil,
   draw_soil,
-  resetSoil,
-  handleHoleChar,
-  searchHole,
+  resetSoil
 } from "./../soil/soil.ts";
 import {getMapId} from "./../enemy/pathfinding.ts";
 import {
@@ -39,11 +38,11 @@ function changeState() {
   let state: string;
   const underboxId: number = getRingState(player.row + 1, player.col);
 
-  if (underboxId === 0 || underboxId === 5 || underboxId === 6) {
+  if (underboxId === 0 || underboxId === 5 || underboxId === 6 || underboxId === 8 ) {
     state = "falling";
   }
   //check player not be in hole
-  if (searchHole(player.row, player.col)) {
+  if (getMapId(player.row, player.col) === 1) {
     state = "standing";
   }
   if (underboxId === 1 || underboxId === 2 || underboxId === 4) {
@@ -115,9 +114,7 @@ export function draw_player(row: number, col: number) {
     .attr("id", "player")
     .attr("src", playerImg) // Set the source of the image
     .addClass("player");
-
   // save id of Box which player is in now, to restore it after player moved
-
   addObject($player, row, col, OBJECT_ID);
 }
 
@@ -138,7 +135,7 @@ export function goLeft() {
     (leftboxId == 0 || leftboxId == 2 || leftboxId == 5 || leftboxId == 6)
   ) {
     resetPlayer(player.row, player.col, getMapId(player.row, player.col));
-    player.col = player.col - 1;
+    player.col--;
     draw_player(player.row, player.col);
   }
 }
@@ -152,7 +149,7 @@ export function goRight() {
     (rightboxId == 0 || rightboxId == 2 || rightboxId == 5 || rightboxId == 6)
   ) {
     resetPlayer(player.row, player.col, getMapId(player.row, player.col));
-    player.col = player.col + 1;
+    player.col++;
     draw_player(player.row, player.col);
   }
 }
@@ -198,5 +195,6 @@ export function digRight() {
     removePath(row, col);
   }
 }*/
+
 
 

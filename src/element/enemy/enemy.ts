@@ -7,7 +7,7 @@ import {
   checkBorders,
 } from "./../ring/ring.ts";
 import { findNextStepBFS, notOccupied, getMapId } from "./../enemy/pathfinding.ts";
-import { searchHole } from "./../soil/soil.ts";
+import {  } from "./../soil/soil.ts";
 import { player } from "./../player/player.ts";
 
 export class Enemy {
@@ -38,9 +38,7 @@ export function drawEnemy(row: number, col: number, id: number) {
   const enemy: Enemy = new Enemy(row, col, id);
   //update enemy new pos in array of enemies
   enemies[id] = enemy;
-
   addObject($enemy, row, col, OBJECT_ID);
-
 }
 
 export function resetEnemy(
@@ -78,7 +76,7 @@ export function enemyRestoreHole(row, col) {
 function moveEnemy() {
   enemies.forEach((enemy, index) => {
 
-      if (notOccupied(enemy.row + 1, enemy.col) && searchHole(enemy.row + 1, enemy.col)){
+      if (notOccupied(enemy.row + 1, enemy.col) && getRingState(enemy.row + 1, enemy.col) === 8){
           resetEnemy(enemy.row, enemy.col, enemy.id, getMapId(enemy.row, enemy.col));
           enemy.row ++;
           drawEnemy(enemy.row, enemy.col, enemy.id);
@@ -92,7 +90,7 @@ function moveEnemy() {
 
           if (!next) return;
 
-          if (notOccupied(next.row, next.col) && !searchHole(enemy.row, enemy.col)) {
+          if (notOccupied(next.row, next.col) && getMapId(enemy.row, enemy.col) !== 1) {
 
             resetEnemy(enemy.row, enemy.col, enemy.id, getMapId(enemy.row, enemy.col));
             enemy.row = next.row;

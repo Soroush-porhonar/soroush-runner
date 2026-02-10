@@ -1,7 +1,7 @@
 import { enemies } from "./enemy.ts";
 import { player } from "./../player/player.ts";
 import { getRingState, checkBorders } from "./../ring/ring.ts";
-import { searchHole } from "./../soil/soil.ts";
+import {  } from "./../soil/soil.ts";
 
 const ROWS = 30;
 const COLS = 60;
@@ -66,7 +66,7 @@ function getNeighbors(node: Pos): Pos[] {
   /* ========= FORCED FALL (not ladder, not bar) ========= */
   if (
     (isEmpty(r + 1,c) || isBar(r + 1,c)) &&
-    !searchHole(r, c) &&
+    getRingState(r, c)!==1 &&
     !isLadder(r,c) &&
     !isBar(r,c)
   ) {

@@ -3,9 +3,11 @@ import $ from "jquery";
 
 const ROWS = 30;
 const COLS = 60;
-const RING: number[][] = Array.from({ length: ROWS }, () =>
-  Array(COLS).fill(0)
-);
+export let RING: number[][]
+export function createZeroRing(): number[][] {
+    RING = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+}
+
 
 let $RING;
 

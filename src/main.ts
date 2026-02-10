@@ -1,6 +1,6 @@
 import $ from "jquery";
 import {body_keydown, body_keyup } from "./element/player/movement.ts";
-import { draw_ring } from "./element/ring/ring.ts";
+import { draw_ring, createZeroRing } from "./element/ring/ring.ts";
 import { drawStage } from "./../src/common/stage.ts";
 import { playerInit } from "./element/player/player.ts";
 import { goldInit } from "./element/gold/gold.ts";
@@ -23,8 +23,9 @@ $('<audio>', {
 $("body").on("keydown", body_keydown);
 $("body").on("keyup", body_keyup);
 $('#backgroundMusic')[0].play();
-draw_ring($("#app")[0]);
 
+createZeroRing();
+draw_ring($("#app")[0]);
 drawStage();
 
 function execute() {
