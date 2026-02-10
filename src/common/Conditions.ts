@@ -38,7 +38,7 @@ function winingRule(){
     }
     else{
         if(player.row === -1){
-            alert("You won")
+            alert("╰(*°▽°*)╯ You won ╰(*°▽°*)╯")
             StatsDefault();
             }
         }
@@ -70,7 +70,7 @@ function losingRule(){
 
 
         if(initialState.life === 0){
-            alert("game Over")
+            alert(";_; Game Over ;_;")
             StatsDefault();
             LevelInit();
 
@@ -78,7 +78,7 @@ function losingRule(){
         else{
             initialState.life --
             setTimeout(() => {
-                alert("You lost");
+                alert("O_O You died O_O");
                 LevelInit();
             }, 150);
             }
