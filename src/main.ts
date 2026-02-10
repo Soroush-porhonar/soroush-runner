@@ -7,8 +7,18 @@ import { goldRepeat } from "./element/gold/gold.ts";
 import { enemyrepeat } from "./element/enemy/enemy.ts";
 import { Rules } from "./../src/common/Conditions.ts";
 
+function checkOrientation() {
+    if (window.innerHeight > window.innerWidth) {
+        alert("Please rotate your device to play in landscape mode.");
+    } else {
+        // Start or continue the game
+    }
+}
 
+window.addEventListener('resize', checkOrientation);
+checkOrientation(); // Check on page load
 
+checkOrientation();
 $('<audio>', {
     id: 'backgroundMusic', // Set id
     loop: true, // Set the loop attribute

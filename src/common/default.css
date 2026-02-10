@@ -102,3 +102,9 @@ table {
   font-weight: bold;
 }
 
+@media screen and (orientation: landscape) {
+    /* Styles for landscape mode */
+    body {
+        /* Your landscape styles */
+    }
+}
