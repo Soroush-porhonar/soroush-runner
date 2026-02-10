@@ -57,7 +57,7 @@ export function body_keyup(e) {
 $(document).ready(function () {
 
   const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
-  //if (!isMobile) return;
+  if (!isMobile) return;
 
   const $root = $('#app').length ? $('#app') : $('body');
   const $controls = $('<div>', { id: 'mobile-controls' });
