@@ -1,5 +1,5 @@
 import $ from "jquery";
-import {body_keydown, body_keyup } from "./element/player/movement.ts";
+import {body_keydown, body_keyup, repeatTouchInput } from "./element/player/movement.ts";
 import { draw_ring, createZeroRing } from "./element/ring/ring.ts";
 import { drawStage, LevelInit } from "./../src/common/stage.ts";
 import { playerInit } from "./element/player/player.ts";
@@ -39,7 +39,7 @@ LevelInit();
 
 
 function execute() {
-  //repeatTouchInput();
+  repeatTouchInput();
   playerInit();
   enemyrepeat();
   goldRepeat();

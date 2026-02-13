@@ -164,7 +164,7 @@ export function goUp() {
 
 export function goDown() {
   const underboxId: number = getRingState(player.row + 1, player.col);
-  if (underboxId == 2 || changeState() === "hanging") {
+  if (underboxId === 2 || (changeState() === "hanging" & underboxId !== 1)) {
     resetPlayer(player.row, player.col, getMapId(player.row, player.col));
     player.row++;
     draw_player(player.row, player.col);

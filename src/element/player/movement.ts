@@ -56,6 +56,21 @@ export function body_keyup(e) {
 }
 
 
+export  const heldKeys = {};
+
+function fakeEvent(code) {
+    return { which: code };
+  }
+
+export  function repeatTouchInput() {
+    for (const code in heldKeys) {
+      if (heldKeys[code]) {
+        body_keydown(fakeEvent(Number(code)));
+      }
+    }
+  };
+
+
 $(document).ready(function () {
 
   const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
@@ -63,7 +78,7 @@ $(document).ready(function () {
 
   const $root = $('#app').length ? $('#app') : $('body');
   const $controls = $('<div>', { id: 'mobile-controls' });
-  const heldKeys = {};
+
 
   const btn = (label, keyCode) =>
     $('<button>', { text: label, 'data-keycode': keyCode });
@@ -85,9 +100,7 @@ $(document).ready(function () {
   $controls.append($dpad, $actions);
   $root.append($controls);
 
-  function fakeEvent(code) {
-    return { which: code };
-  }
+
 
   $controls.find('button').on('touchstart', function (e) {
     e.preventDefault();
@@ -105,12 +118,6 @@ $(document).ready(function () {
     body_keyup(fakeEvent(code));
   });
 
-  window.repeatTouchInput = function () {
-    for (const code in heldKeys) {
-      if (heldKeys[code]) {
-        body_keydown(fakeEvent(Number(code)));
-      }
-    }
-  };
+  repeatTouchInput()
 
 });
