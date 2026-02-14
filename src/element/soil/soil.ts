@@ -1,9 +1,7 @@
 import "./soil.css";
 import $ from "jquery";
 import { addObject, removeObject } from "./../ring/ring.ts";
-import { notOccupied } from "./../enemy/pathfinding.ts";
-import { enemyRestoreHole } from "./../enemy/enemy.ts";
-import { addMap, removeMap } from "./../enemy/pathfinding.ts";
+import { addMap } from "./../enemy/pathfinding.ts";
 //import { playerRestoreHole } from "./../player/player.ts";
 
 export class Soil {
@@ -21,15 +19,16 @@ export function draw_soil(row: number, col: number) {
   const $soil = $("<div></div>")
     .attr("id", "soil" + id)
     .addClass("soil");
-  addObject($soil, row, col, OBJECT_ID);
+  const soilElement: HTMLDivElement = $soil.get(0) as HTMLDivElement;
+  addObject(soilElement, row, col, OBJECT_ID);
   addMap(row, col, OBJECT_ID);
 }
 
 export function resetSoil(row: number, col: number, targetId: number) {
   const id: string = row + "-" + col;
   const $soil = $("#soil" + id).remove();
-  removeObject($soil, row, col, targetId);
-
+  const soilElement: HTMLDivElement = $soil.get(0) as HTMLDivElement;
+  removeObject(soilElement, row, col, targetId);
 }
 
 /*export const Holes: Soil[] = [];

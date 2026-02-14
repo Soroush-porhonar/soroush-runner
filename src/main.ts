@@ -1,48 +1,38 @@
 import $ from "jquery";
-import {body_keydown, body_keyup, repeatTouchInput } from "./element/player/movement.ts";
-import { draw_ring, createZeroRing } from "./element/ring/ring.ts";
-import { drawStage, LevelInit } from "./../src/common/stage.ts";
-import { playerInit } from "./element/player/player.ts";
+import {
+  body_keydown,
+  body_keyup,
+  repeatTouchInput,
+} from "./element/player/movement.ts";
+import { draw_ring } from "./element/ring/ring.ts";
+import { LevelInit } from "./../src/common/stage.ts";
+import { playerRepeat } from "./element/player/player.ts";
 import { goldRepeat } from "./element/gold/gold.ts";
-import { enemyrepeat } from "./element/enemy/enemy.ts";
+import { enemyRepeat } from "./element/enemy/enemy.ts";
 import { Rules } from "./../src/common/Conditions.ts";
+import { addSong } from "./../src/audio/audio.ts";
 
-window.addEventListener('resize', checkOrientation);
-checkOrientation(); // Check on page load
-function checkOrientation() {
-    if (window.innerHeight > window.innerWidth) {
-        alert("Please rotate your device to play in landscape mode.");
-    } else {
-        // Start or continue the game
-    }
+window.addEventListener("resize", checkOrientation);
+
+function checkOrientation(): void {
+  if (window.innerHeight > window.innerWidth) {
+    alert("Please rotate your device to play in landscape mode.");
+  }
 }
 
-
-
-
-$('<audio>', {
-    id: 'backgroundMusic', // Set id
-    loop: true, // Set the loop attribute
-}).append($('<source>', {
-    src: 'src/audio/background.mp3', // Set the audio source
-    type: 'audio/mp3' // Specify the type
-})).appendTo('#app'); // Append to the body
-
-
+draw_ring($("#app")[0] as HTMLDivElement);
 $("body").on("keydown", body_keydown);
 $("body").on("keyup", body_keyup);
-$('#backgroundMusic')[0].play();
-draw_ring($("#app")[0]);
-
+addSong();
+($("#backgroundMusic")[0] as HTMLAudioElement).play();
 
 LevelInit();
 
-
-function execute() {
+function repeat(): void {
   repeatTouchInput();
-  playerInit();
-  enemyrepeat();
+  playerRepeat();
+  enemyRepeat();
   goldRepeat();
   Rules();
 }
-let interval = setInterval(execute, 200);
+setInterval(repeat, 200);

@@ -2,17 +2,8 @@ import "./player.css";
 import $ from "jquery";
 import { addObject, removeObject, getRingState } from "./../ring/ring.ts";
 import { handleHoleChar } from "./../hole/hole.ts";
-import {
-  Soil,
-  draw_soil,
-  resetSoil
-} from "./../soil/soil.ts";
-import {getMapId} from "./../enemy/pathfinding.ts";
-import {
-  drawEnemy,
-  enemies,
-  resetEnemy,
-} from "./../enemy/enemy.ts";
+import { Soil } from "./../soil/soil.ts";
+import { getMapId } from "./../enemy/pathfinding.ts";
 
 export class Player {
   row: number;
@@ -28,9 +19,8 @@ export let player: Player;
 //current image for player
 let playerImg: string = "src/element/player/player-images/player-standing.png";
 
-export function playerInit() {
+export function playerRepeat() {
   playerFall();
-
 }
 
 // change state of player effecting logic of game only
@@ -38,7 +28,12 @@ function changeState() {
   let state: string;
   const underboxId: number = getRingState(player.row + 1, player.col);
 
-  if (underboxId === 0 || underboxId === 5 || underboxId === 6 || underboxId === 8 ) {
+  if (
+    underboxId === 0 ||
+    underboxId === 5 ||
+    underboxId === 6 ||
+    underboxId === 8
+  ) {
     state = "falling";
   }
   //check player not be in hole
@@ -60,41 +55,41 @@ function changeState() {
 
 //updating image based on keydown and up for player visual
 export function visState(input) {
-    const state = changeState()
+  const state = changeState();
 
-  if (input === "still" ) {
-      if (state === "hanging"){
-          playerImg = "./src/element/player/player-images/player-hanging-still.png";
-          }
-      if(state === "standing"){
-          playerImg = "./src/element/player/player-images/player-standing.png";
-          }
-      //return;
+  if (input === "still") {
+    if (state === "hanging") {
+      playerImg = "./src/element/player/player-images/player-hanging-still.png";
+    }
+    if (state === "standing") {
+      playerImg = "./src/element/player/player-images/player-standing.png";
+    }
+    //return;
   }
-  if (input === "left" ) {
-      if (state === "hanging"){
-          playerImg = "./src/element/player/player-images/player-hanging-left.png";
-          }
-      if (state === "standing"){
-          playerImg = "./src/element/player/player-images/player-walk-left.png";
-          }
-      //return;
+  if (input === "left") {
+    if (state === "hanging") {
+      playerImg = "./src/element/player/player-images/player-hanging-left.png";
+    }
+    if (state === "standing") {
+      playerImg = "./src/element/player/player-images/player-walk-left.png";
+    }
+    //return;
   }
   if (input === "right") {
-      if (state === "hanging"){
-          playerImg = "./src/element/player/player-images/player-hanging-right.png";
-          }
-      if (state === "standing"){
-          playerImg = "./src/element/player/player-images/player-walk-right.png";
-          }
-      //return;
+    if (state === "hanging") {
+      playerImg = "./src/element/player/player-images/player-hanging-right.png";
+    }
+    if (state === "standing") {
+      playerImg = "./src/element/player/player-images/player-walk-right.png";
+    }
+    //return;
   }
   if ((input === "up" || input === "down") && state === "climbing") {
-      playerImg = "./src/element/player/player-images/player-climbing.png";
+    playerImg = "./src/element/player/player-images/player-climbing.png";
   }
-  if(state === "falling"){
-      playerImg = "./src/element/player/player-images/player-hanging-still.png";
-      }
+  if (state === "falling") {
+    playerImg = "./src/element/player/player-images/player-hanging-still.png";
+  }
 
   //forcing a redraw to update the image on spot not after a move
   resetPlayer(player.row, player.col, getMapId(player.row, player.col));
@@ -164,7 +159,7 @@ export function goUp() {
 
 export function goDown() {
   const underboxId: number = getRingState(player.row + 1, player.col);
-  if (underboxId === 2 || (changeState() === "hanging" & underboxId !== 1)) {
+  if (underboxId === 2 || (changeState() === "hanging") & (underboxId !== 1)) {
     resetPlayer(player.row, player.col, getMapId(player.row, player.col));
     player.row++;
     draw_player(player.row, player.col);
@@ -195,6 +190,3 @@ export function digRight() {
     removePath(row, col);
   }
 }*/
-
-
-

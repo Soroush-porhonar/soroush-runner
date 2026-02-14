@@ -9,16 +9,15 @@ import {
   visState,
 } from "./player.ts";
 
-
-
-export function body_keydown(e) {
+export function body_keydown(e: JQuery.Event): void {
+  console.log(e);
   switch (e.which) {
     case 37: // LEFT
       visState("left");
       goLeft();
       break;
     case 38: // UP
-    visState("up");
+      visState("up");
       goUp();
       break;
     case 39: // RIGHT
@@ -26,7 +25,7 @@ export function body_keydown(e) {
       goRight();
       break;
     case 40: // DOWN
-    visState("down");
+      visState("down");
       goDown();
       break;
     case 69: // dig right
@@ -38,7 +37,7 @@ export function body_keydown(e) {
   }
 }
 
-export function body_keyup(e) {
+export function body_keyup(e: JQuery.Event) {
   switch (e.which) {
     case 37: // LEFT
       visState("still");
@@ -49,75 +48,68 @@ export function body_keyup(e) {
     case 40: // DOWN
       visState("down");
       break;
-    case 38: // DOWN
+    case 38: // Up
       visState("up");
       break;
   }
 }
 
+export const heldKeys = {};
 
-export  const heldKeys = {};
+function fakeEvent(code: number): JQuery.Event {
+  return { which: code };
+}
 
-function fakeEvent(code) {
-    return { which: code };
-  }
-
-export  function repeatTouchInput() {
-    for (const code in heldKeys) {
-      if (heldKeys[code]) {
-        body_keydown(fakeEvent(Number(code)));
-      }
+export function repeatTouchInput() {
+  for (const code in heldKeys) {
+    if (heldKeys[code]) {
+      body_keydown(fakeEvent(Number(code)));
     }
-  };
-
+  }
+}
 
 $(document).ready(function () {
-
   const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
   if (!isMobile) return;
 
-  const $root = $('#app').length ? $('#app') : $('body');
-  const $controls = $('<div>', { id: 'mobile-controls' });
+  const $root = $("#app").length ? $("#app") : $("body");
+  const $controls = $("<div>", { id: "mobile-controls" });
 
+  const btn = (label: string, keyCode: number) =>
+    $("<button>", { text: label, "data-keycode": keyCode });
 
-  const btn = (label, keyCode) =>
-    $('<button>', { text: label, 'data-keycode': keyCode });
-
-  const $dpad = $('<div>', { class: 'dpad' }).append(
-    $('<div class="row center">').append(btn('▲', 38)),
+  const $dpad = $("<div>", { class: "dpad" }).append(
+    $('<div class="row center">').append(btn("▲", 38)),
     $('<div class="row">').append(
-      btn('◀', 37),
+      btn("◀", 37),
       $('<div class="spacer">'),
-      btn('▶', 39)
+      btn("▶", 39),
     ),
-    $('<div class="row center">').append(btn('▼', 40))
+    $('<div class="row center">').append(btn("▼", 40)),
   );
 
-  const $actions = $('<div>', { class: 'actions' })
-    .append(btn('Q', 81))
-    .append(btn('E', 69));
+  const $actions = $("<div>", { class: "actions" })
+    .append(btn("Q", 81))
+    .append(btn("E", 69));
 
   $controls.append($dpad, $actions);
   $root.append($controls);
 
-
-
-  $controls.find('button').on('touchstart', function (e) {
+  $controls.find("button").on("touchstart", function (e) {
     e.preventDefault();
-    const code = Number($(this).data('keycode'));
+    const code = Number($(this).data("keycode"));
     heldKeys[code] = true;
-    $(this).addClass('pressed');
+    $(this).addClass("pressed");
     body_keydown(fakeEvent(code));
   });
 
-  $controls.find('button').on('touchend touchcancel', function (e) {
+  $controls.find("button").on("touchend touchcancel", function (e) {
     e.preventDefault();
-    const code = Number($(this).data('keycode'));
+    const code = Number($(this).data("keycode"));
     heldKeys[code] = false;
-    $(this).removeClass('pressed');
+    $(this).removeClass("pressed");
     body_keyup(fakeEvent(code));
   });
 
-  repeatTouchInput()
-
+  repeatTouchInput();
 });

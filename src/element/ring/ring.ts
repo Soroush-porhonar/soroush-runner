@@ -3,16 +3,14 @@ import $ from "jquery";
 
 const ROWS = 30;
 const COLS = 60;
-export let RING: number[][]
-export function createZeroRing(): number[][] {
-    RING = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+export let RING: number[][];
+export function createZeroRing(): void {
+  RING = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
 }
 
+let $RING: JQuery<HTMLElement>;
 
-let $RING;
-
-
-export function checkBorders(row, col) {
+export function checkBorders(row: number, col: number) {
   if (row < 0 || row >= ROWS) {
     //console.error("Invalid Object request: " + row + " is more than " + ROWS);
     return false;
@@ -35,7 +33,7 @@ export function removeObject(
   object: HTMLDivElement,
   row: number,
   col: number,
-  objId: number
+  objId: number,
 ) {
   checkBorders(row, col);
 
@@ -46,7 +44,7 @@ export function addObject(
   object: HTMLDivElement,
   row: number,
   col: number,
-  objId: number
+  objId: number,
 ) {
   if (!checkBorders(row, col)) return;
 
@@ -69,8 +67,9 @@ export function addObject(
   $RING.append($object);
 }
 
-export function getRingState(row: number, col: number) {
-    if (checkBorders(row, col )){
-        return RING[row][col];
-        }
+export function getRingState(row: number, col: number): number | undefined {
+  if (checkBorders(row, col)) {
+    return RING[row][col];
+  }
+  return;
 }

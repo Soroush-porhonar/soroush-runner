@@ -1,6 +1,6 @@
 import "./conc.css";
 import $ from "jquery";
-import { addObject, removeObject } from "./../ring/ring.ts";
+import { addObject } from "./../ring/ring.ts";
 import { addMap } from "./../enemy/pathfinding.ts";
 
 export class Conc {
@@ -18,6 +18,7 @@ export function drawConc(row: number, col: number) {
   const $conc = $("<div></div>")
     .attr("id", "conc" + id)
     .addClass("conc");
-  addObject($conc, row, col, OBJECT_ID);
+  const concElement: HTMLDivElement = $conc.get(0) as HTMLDivElement;
+  addObject(concElement, row, col, OBJECT_ID);
   addMap(row, col, OBJECT_ID);
 }
