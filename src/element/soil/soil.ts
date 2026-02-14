@@ -1,21 +1,82 @@
-import './soil.css'
-import $ from 'jquery'
-
-export function draw_soil( parent: HTMLDivElement, left: number, bottom: number ,right: number) {
-    $( parent ).append(
-        $( '<div></div>' )
-            .attr( 'id', 'ground' )
-            .addClass( 'soil' )
-            .css( {
-                left: left,
-                bottom: bottom,
-                 right:  right
-            } )
-    );
-}
+import "./soil.css";
+import $ from "jquery";
+import { addObject, removeObject } from "./../ring/ring.ts";
+import { addMap } from "./../enemy/pathfinding.ts";
+//import { playerRestoreHole } from "./../player/player.ts";
 
 export class Soil {
-    left: number;
-    bottom: number;
-    right: right;
+  row: number;
+  col: number;
+  constructor(row: number, col: number) {
+    this.row = row;
+    this.col = col;
+  }
 }
+
+export function draw_soil(row: number, col: number) {
+  const OBJECT_ID = 1;
+  const id: string = row + "-" + col;
+  const $soil = $("<div></div>")
+    .attr("id", "soil" + id)
+    .addClass("soil");
+  const soilElement: HTMLDivElement = $soil.get(0) as HTMLDivElement;
+  addObject(soilElement, row, col, OBJECT_ID);
+  addMap(row, col, OBJECT_ID);
+}
+
+export function resetSoil(row: number, col: number, targetId: number) {
+  const id: string = row + "-" + col;
+  const $soil = $("#soil" + id).remove();
+  const soilElement: HTMLDivElement = $soil.get(0) as HTMLDivElement;
+  removeObject(soilElement, row, col, targetId);
+}
+
+/*export const Holes: Soil[] = [];
+
+export function addHole(row, col) {
+  Holes.push(new Soil(row, col));
+}
+
+export function removeHole(row, col) {
+  const index = Holes.findIndex((soil) => soil.row === row && soil.col === col);
+  if (index !== -1) {
+    Holes.splice(index, 1); // Remove the Soil object at the found index
+  }
+}
+export function searchHole(row, col) {
+  const index = Holes.findIndex((hole) => hole.row === row && hole.col === col);
+  if (index !== -1) {
+    return true;
+  } else {
+    return false;
+  }
+}
+// restoring a holed soil and the path to continue player search  checking if enemy or player is in it to restore them as well
+export async function handleHoleChar(row, col) {
+  resetSoil(row, col, 0);
+  //removeMap(row, col, 0);
+  addHole(row, col);
+
+  setTimeout(() => {
+    waiting(row,col);
+  }, 3000);
+}
+async function waiting(row,col) {
+    await waitUntil(() => notOccupied(row -1,col));
+    enemyRestoreHole(row, col);
+    playerLoseHole(row,col)
+    removeHole(row, col);
+    draw_soil(row, col);
+
+    }
+
+function waitUntil(conditionFn, checkEveryMs = 100) {
+  return new Promise(resolve => {
+    const interval = setInterval(() => {
+      if (conditionFn()) {
+        clearInterval(interval);
+        resolve();
+      }
+    }, checkEveryMs);
+  });
+}*/
