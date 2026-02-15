@@ -3,44 +3,44 @@ import { drawWLadder, LevelInit } from "./stage.ts";
 import { getMapId } from "./../element/enemy/pathfinding.ts";
 import { player } from "./../element/player/player.ts";
 import { getRingState } from "./../element/ring/ring.ts";
+import type { Enemy } from "../element/enemy/enemy.ts";
 
 export function Rules(): void {
   winingRule();
   losingRule();
 }
 
-interface GameState {
-  score: number;
-  life: number;
-  gameOver: boolean;
-  lose: boolean;
-  win: boolean;
-  Wladder: boolean;
-}
-let initState: GameState;
 
-function StatsDefault(): void {
-  initState = {
+let gameState: GameState;
+let gameElement: GameElement;
+
+export function getStageName(): string {
+  return gameState.stageName;
+}
+
+function resetStateToDefault(): void {
+  gameState = {
     score: 0,
     life: 3,
     gameOver: false,
     lose: false,
     win: false,
     Wladder: false,
+    stageName: "stage-1",   // TODO: change later based on the level
   };
 }
 
-StatsDefault();
+resetStateToDefault();
 function winingRule(): void {
-  if (!initState.Wladder) {
+  if (!gameState.Wladder) {
     if (golds.length === 0) {
       drawWLadder();
-      initState.Wladder = true;
+      gameState.Wladder = true;
     }
   } else {
     if (player.row === -1) {
       alert("╰(*°▽°*)╯ You won ╰(*°▽°*)╯");
-      StatsDefault();
+      resetStateToDefault();
     }
   }
 }
@@ -76,12 +76,12 @@ function losingRule(): void {
   const playerInTouch: boolean = enemytouch(player.row, player.col);
 
   if (playerInHole || playerInTouch) {
-    if (initState.life === 0) {
+    if (gameState.life === 0) {
       alert(";_; Game Over ;_;");
-      StatsDefault();
+      resetStateToDefault();
       LevelInit();
     } else {
-      initState.life--;
+      gameState.life--;
       setTimeout((): void => {
         alert("O_O You died O_O");
         LevelInit();

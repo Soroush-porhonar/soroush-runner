@@ -3,12 +3,60 @@ import $ from "jquery";
 
 const ROWS = 30;
 const COLS = 60;
-export let RING: number[][];
-export function createZeroRing(): void {
-  RING = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+export let RING: number[][];      // TODO: remove it...
+
+
+export class Ring {
+  private map: number[][];
+  private $RING: JQuery<HTMLElement>;
+
+
+  constructor() {
+    this.map = [];
+    this.$RING = $("<div></div>")
+      .attr("id", "ring")
+      .addClass("ring")
+      .css({});
+    this.reset()
+  }
+
+  public reset() {
+    this.map = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+    this.$RING.empty();
+  }
+
+  public addObject(
+    object: HTMLDivElement,
+    row: number,
+    col: number,
+    objId: number,
+  ) {
+    if (!checkBorders(row, col)) return;
+
+    // logic
+    RING[row][col] = objId;
+
+    // visual
+    const visCol = (col / COLS) * 100;
+    const visRow = (row / ROWS) * 100;
+    const visWidth = 100 / COLS;
+    const visHeight = 100 / ROWS;
+
+    const $object = $(object).css({
+      width: visWidth + "%",
+      left: visCol + "%",
+      top: visRow + "%",
+      height: visHeight + "%",
+    });
+
+    this.$RING.append($object);
+  }
+
+  public getRingObject(): HTMLDivElement {
+    return this.$RING[0] as HTMLDivElement;
+  }
 }
 
-let $RING: JQuery<HTMLElement>;
 
 export function checkBorders(row: number, col: number) {
   if (row < 0 || row >= ROWS) {
@@ -20,13 +68,6 @@ export function checkBorders(row: number, col: number) {
     return false;
   }
   return true;
-}
-
-export function draw_ring(parent: HTMLDivElement): HTMLDivElement {
-  let $ring = $("<div></div>").attr("id", "ring").addClass("ring").css({});
-  $(parent).prepend($ring);
-  $RING = $ring;
-  return $ring[0];
 }
 
 export function removeObject(
@@ -71,5 +112,6 @@ export function getRingState(row: number, col: number): number | undefined {
   if (checkBorders(row, col)) {
     return RING[row][col];
   }
-  return;
+  
+  throw new Error(`Invalid Position: { row, col }` );
 }
