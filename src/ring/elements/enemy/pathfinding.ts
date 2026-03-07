@@ -1,10 +1,10 @@
 import { Enemy } from "./enemy.ts";
 import type { Player } from "../player/player.ts";
-import { type Ring } from "../../ring.ts";
-import { Element, ObjectId } from "../../ring";
+import { ObjectId } from "../../ring";
 import type { Stage } from "../../../common/stage.ts";
 export type Pos = { row: number; col: number };
 type Node = Pos & { parent: Node | null };
+import { Hole } from "../hole/hole.ts";
 
 export class Bfs {
   constructor(private stage: Stage) {}
@@ -12,9 +12,10 @@ export class Bfs {
     return this.stage.getMapElement(r, c)?.Id === ObjectId.Empty;
   }
 
-  private isHole(r: number, c: number): boolean {
-    return this.stage.getMapElement(r, c)?.Id === ObjectId.Hole;
+  public isHole(r: number, c: number): boolean {
+    return this.stage.getMapElement(r, c) instanceof Hole;
   }
+
   private isSolid(r: number, c: number): boolean {
     return (
       this.stage.getMapElement(r, c)?.Id === ObjectId.Soil ||
@@ -29,8 +30,8 @@ export class Bfs {
   private isBar(r: number, c: number): boolean {
     return this.stage.getMapElement(r, c)?.Id === ObjectId.Bar;
   }
-  private isEnemy(r: number, c: number): boolean {
-    return this.stage.getRingElement(r, c)?.Id === ObjectId.Enemy;
+  public isEnemy(r: number, c: number): boolean {
+    return this.stage.getRingElement(r, c) instanceof Enemy;
   }
   private forcedFallCondition(r: number, c: number) {
     const underbox = this.isEmpty(r + 1, c) || this.isBar(r + 1, c);

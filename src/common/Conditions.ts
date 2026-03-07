@@ -49,7 +49,7 @@ export class GameState {
       this.stageNumber++);
   }
 
-  public get number() {
+  public get getStageNumber() {
     return this.stageNumber;
   }
   public get getlife() {

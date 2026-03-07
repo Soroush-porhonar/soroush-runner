@@ -32,9 +32,11 @@ interface StageList {
 
 export class Stage {
   constructor(
-    private gameplay: Gameplay,
     private _RingRow: number = 30,
     private _RingCol: number = 60,
+    private enemies: Enemy[] = [],
+    private golds: Gold[] = [],
+    private player: Player = new Player(0, 0),
     private ring: Ring = new Ring(_RingRow, _RingCol),
     private visualRing: VisualRing = new VisualRing(_RingRow, _RingCol),
   ) {}
@@ -42,6 +44,31 @@ export class Stage {
   public reset() {
     this.ring.reset();
     this.visualRing.reset();
+    this.enemies = [];
+    this.golds = [];
+  }
+  public goldAddList(gold: Gold) {
+    this.golds.push(gold);
+  }
+
+  public enemyAddList(enemy: Enemy) {
+    this.enemies.push(enemy);
+  }
+
+  public goldRemoveList(gold: Gold) {
+    this.golds = this.golds.filter((item: Gold) => item !== gold);
+  }
+  public playerChange(player: Player) {
+    this.player = player;
+  }
+  public get getPlayer() {
+    return this.player;
+  }
+  public get getEnemies() {
+    return this.enemies;
+  }
+  public get getGolds() {
+    return this.golds;
   }
 
   public get getRing() {
@@ -97,7 +124,7 @@ export class Stage {
   private drawGold(stageNumber: number) {
     stageDrawDict[stageNumber]["Gold"].forEach((item: blueprint): void => {
       const gold = new Gold(item.row, item.col);
-      this.gameplay.addGoldList(gold);
+      this.goldAddList(gold);
       this.drawAndAddRing(gold);
     });
   }
@@ -105,7 +132,7 @@ export class Stage {
   private drawPlayer(stageNumber: number) {
     stageDrawDict[stageNumber]["Player"].forEach((item: blueprint): void => {
       const player = new Player(item.row, item.col);
-      this.gameplay.playerChange(player);
+      this.playerChange(player);
       this.drawAndAddRing(player);
     });
   }
@@ -113,13 +140,12 @@ export class Stage {
   private drawEnemy(stageNumber: number) {
     stageDrawDict[stageNumber]["Enemy"].forEach((item: blueprint): void => {
       const enemy = new Enemy(item.row, item.col);
-      this.gameplay.addEnemyList(enemy);
+      this.enemyAddList(enemy);
       this.drawAndAddRing(enemy);
     });
   }
 
-  public drawWLadder() {
-    const stageNumber = this.gameplay.getState.stageNumber;
+  public drawWLadder(stageNumber: number) {
     stageDrawDict[stageNumber]["WLadder"].forEach((item: blueprint): void => {
       for (let index = 0; index < item.count; index++) {
         const ladder = new Ladder(item.row + index, item.col);
@@ -141,8 +167,7 @@ export class Stage {
     this.drawGold(stageNumber);
   }
 
-  public drawInitStage() {
-    const stageNumber = this.gameplay.getState.stageNumber;
+  public drawInitStage(stageNumber: number) {
     this.initMap(stageNumber);
     this.initRing(stageNumber);
   }

@@ -66,7 +66,7 @@ $(document).ready(function () {
 
   function repeat(): void {
     game.getGameplay.Rules();
-    game.getGameplay.getPlayer.updLogState(game.getGameplay.getStage);
+    game.getGameplay.getStage.getPlayer.updLogState(game.getGameplay.getStage);
     game.getGameplay.playerFalling();
     game.getGameplay.enemyMove();
     game.getGameplay.goldCheck();
