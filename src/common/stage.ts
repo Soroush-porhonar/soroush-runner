@@ -1,245 +1,257 @@
-import $ from "jquery";
-import { draw_soil } from "./../element/soil/soil.ts";
-import { draw_ladder } from "./../element/ladder/ladder.ts";
-import { drawEnemy, Enemy, enemyInit } from "./../element/enemy/enemy.ts";
-import { drawBar } from "./../element/bar/bar.ts";
-import { draw_player, Player } from "./../element/player/player.ts";
-import { drawGold, Gold, goldInit } from "./../element/gold/gold.ts";
-import { drawConc } from "./../element/concrete/conc.ts";
-import { Ring, createZeroRing, removeObject, getRingState } from "./../element/ring/ring.ts";
-import { getStageName } from "./Conditions.ts";
+import { Enemy } from "./../ring/elements/enemy/enemy.ts";
+import { Bar } from "./../ring/elements/bar/bar.ts";
+import { Player } from "./../ring/elements/player/player.ts";
+import { Gold } from "./../ring/elements/gold/gold.ts";
+import { Ring, type MapElement, type RingElement } from "./../ring/ring.ts";
+import { Soil } from "../ring/elements/soil/soil.ts";
+import { Conc } from "../ring/elements/concrete/conc.ts";
+import { Ladder } from "../ring/elements/ladder/ladder.ts";
+import { Gameplay } from "./gameplay.ts";
+import { VisualRing, Element } from "./../ring/ring.ts";
 
-interface SoilRow {
+export interface blueprint {
   row: number;
   col: number;
   count: number;
 }
 
-interface LadderCol {
-  row: number;
-  col: number;
-  count: number;
+interface StageDrawDict {
+  [key: number]: StageList; // Allows for dynamic stage names
 }
 
-interface BarRow {
-  row: number;
-  col: number;
-  count: number;
+interface StageList {
+  Soil: blueprint[];
+  Ladder: blueprint[];
+  Player: blueprint[];
+  Enemy: blueprint[];
+  Bar: blueprint[];
+  Gold: blueprint[];
+  Conc: blueprint[];
+  WLadder: blueprint[];
 }
 
-interface ConcRow {
-  row: number;
-  col: number;
-  count: number;
-}
+export class Stage {
+  constructor(
+    private gameplay: Gameplay,
+    private _RingRow: number = 30,
+    private _RingCol: number = 60,
+    private ring: Ring = new Ring(_RingRow, _RingCol),
+    private visualRing: VisualRing = new VisualRing(_RingRow, _RingCol),
+  ) {}
 
-interface Stage {
-  Soil: SoilRow[];
-  Ladder: LadderCol[];
-  Player: Player;
-  Enemy: Enemy[];
-  Bar: BarRow[];
-  Gold: Gold[];
-  Conc: ConcRow[];
-  WLadder: LadderCol[];
-}
+  public reset() {
+    this.ring.reset();
+    this.visualRing.reset();
+  }
 
-interface GameState {
-  score: number;
-  life: number;
-  gameOver: boolean;
-  lose: boolean;
-  win: boolean;
-  Wladder: boolean;
-  stageName: string;
-}
+  public get getRing() {
+    return this.ring;
+  }
 
-interface GameElement {
-  ring: Ring,
-  enemies: Enemy[];
-}
+  public get getVisualRing() {
+    return this.visualRing;
+  }
+  public get get_RingRow() {
+    return this._RingRow;
+  }
+  public get get_RingCol() {
+    return this._RingCol;
+  }
 
-interface StageDict {
-  [key: string]: Stage; // Allows for dynamic stage names
-}
-
-let gameElement = { 
-  ring: new Ring(),
-  enemies: [],
-} as GameElement;
-
-const stageDict: StageDict = {
-  "stage-1": {
-    Soil: [
-      { row: 2, col: 5, count: 7 } as SoilRow,
-      { row: 20, col: 5, count: 17 } as SoilRow,
-      { row: 28, col: 0, count: 60 } as SoilRow,
-      { row: 17, col: 25, count: 31 } as SoilRow,
-      { row: 5, col: 25, count: 20 } as SoilRow,
-      { row: 11, col: 20, count: 5 } as SoilRow,
-      { row: 5, col: 50, count: 5 } as SoilRow,
-    ],
-    Ladder: [
-      { row: 20, col: 14, count: 8 } as LadderCol,
-      { row: 2, col: 10, count: 18 } as LadderCol,
-      { row: 17, col: 50, count: 11 } as LadderCol,
-      { row: 5, col: 40, count: 12 } as LadderCol,
-    ],
-    Player: new Player( 10, 20, undefined ),
-    Enemy: [
-      new Enemy( 25, 10, 0 ),
-      { row: 23, col: 55, id: 1 } as Enemy,
-      { row: 2, col: 40, id: 2 } as Enemy,
-      { row: 1, col: 11, id: 3 } as Enemy,
-    ],
-    Bar: [
-      { row: 8, col: 11, count: 29 } as BarRow,
-      { row: 16, col: 11, count: 15 } as BarRow,
-      { row: 4, col: 45, count: 7 } as BarRow,
-    ],
-    Gold: [
-      { row: 4, col: 35, id: 0 } as Gold,
-      { row: 27, col: 40, id: 1 } as Gold,
-      { row: 19, col: 20, id: 2 } as Gold,
-      { row: 1, col: 6, id: 3 } as Gold,
-      { row: 10, col: 22, id: 4 } as Gold,
-      { row: 4, col: 54, id: 5 } as Gold,
-      { row: 27, col: 11, id: 6 } as Gold,
-    ],
-    Conc: [{ row: 29, col: 0, count: 90 } as ConcRow],
-    WLadder: [{ row: 0, col: 30, count: 5 } as LadderCol],
-  },
-};
-
-export function drawStage( stageName: string ): void {
-  stageDict[stageName]["Soil"].forEach(function (item: SoilRow): void {
-    for (let index = 0; index < item.count; index++) {
-      draw_soil(item.row, item.col + index);
-    }
-  });
-
-  stageDict[stageName]["Conc"].forEach(function (item: ConcRow): void {
-    for (let index = 0; index < item.count; index++) {
-      drawConc(item.row, item.col + index);
-    }
-  });
-
-  stageDict[stageName]["Ladder"].forEach(function (item: LadderCol): void {
-    for (let index = 0; index < item.count; index++) {
-      draw_ladder(item.row + index, item.col);
-    }
-  });
-
-  stageDict[stageName]["Bar"].forEach(function (item: BarRow): void {
-    for (let index = 0; index < item.count; index++) {
-      drawBar(item.row, item.col + index);
-    }
-  });
-
-  stageDict[stageName]["Gold"].forEach(function (item: Gold): void {
-    drawGold(item.row, item.col, item.id);
-  });
-
-  const player = stageDict[stageName]["Player"];
-  draw_player(player.row, player.col);
-
-  stageDict[stageName]["Enemy"].forEach(function (item: Enemy): void {
-    drawEnemy(item.row, item.col, item.id);
-  });
-}
-
-export function drawWLadder(): void {
-  const stageName = getStageName();
-  stageDict[stageName]["WLadder"].forEach(function (item: LadderCol): void {
-    for (let index = 0; index < item.count; index++) {
-      draw_ladder(item.row + index, item.col);
-    }
-  });
-}
-
-export function LevelInit( ring: Ring | undefined = undefined ): void {
-  if ( ring !== undefined ) {
-    gameElement.ring = ring;
-  } 
-  
-  const stageName = getStageName();
-  gameElement.ring.reset();
-  enemyInit( stageDict[stageName]["Enemy"] );
-  goldInit();
-  drawStage(stageName);
-}
-
-function createStageObject( stageName: string) {
-
-}
-
-export function enemyInit( initEnemies: Enemy[] ) {
-  enemies = initEnemies;
-}
-
-export function enemyRepeat() {
-  moveEnemy();
-}
-
-//for each enemy calculate path to player, check if it should move
-function moveEnemy(): void {
-  gameElement.enemies.forEach((enemy) => {
-    if (
-      notOccupied(enemy.row + 1, enemy.col) &&
-      getRingState(enemy.row + 1, enemy.col) === 8
-    ) {
-      resetEnemy(
-        enemy.row,
-        enemy.col,
-        enemy.id,
-        getMapId(enemy.row, enemy.col),
-        enemy.getDrawObjectId()
-      );
-      enemy.row++;
-      drawEnemy(enemy.row, enemy.col, enemy.id);
-      return;
-    } else {
-      const next = findNextStepBFS(
-        { row: enemy.row, col: enemy.col },
-        { row: player.row, col: player.col },
-      );
-
-      if (!next) return;
-
-      if (
-        notOccupied(next.row, next.col) &&
-        getMapId(enemy.row, enemy.col) !== 1
-      ) {
-        resetEnemy(
-          enemy.row,
-          enemy.col,
-          enemy.id,
-          getMapId(enemy.row, enemy.col),
-        );
-        enemy.row = next.row;
-        enemy.col = next.col;
-        drawEnemy(enemy.row, enemy.col, enemy.id);
+  private drawSoil(stageNumber: number) {
+    stageDrawDict[stageNumber]["Soil"].forEach((item: blueprint) => {
+      for (let index = 0; index < item.count; index++) {
+        const soil = new Soil(item.row, item.col + index);
+        this.drawAndAddMap(soil);
       }
-    }
-  });
-}
+    });
+  }
 
-//check and  restore and draw enemy from hole
-export function enemyRestoreHole(row: number, col: number) {
-  if (getRingState(row, col) === 4) {
-    const id = findEnemyId(row, col);
-    resetEnemy(row, col, id, 0);
-    drawEnemy(row - 1, col, id);
+  private drawConc(stageNumber: number) {
+    stageDrawDict[stageNumber]["Conc"].forEach((item: blueprint): void => {
+      for (let index = 0; index < item.count; index++) {
+        const conc = new Conc(item.row, item.col + index);
+        this.drawAndAddMap(conc);
+      }
+    });
+  }
+
+  private drawLadder(stageNumber: number) {
+    stageDrawDict[stageNumber]["Ladder"].forEach((item: blueprint): void => {
+      for (let index = 0; index < item.count; index++) {
+        const ladder = new Ladder(item.row + index, item.col);
+        this.drawAndAddMap(ladder);
+      }
+    });
+  }
+
+  private drawBar(stageNumber: number) {
+    stageDrawDict[stageNumber]["Bar"].forEach((item: blueprint): void => {
+      for (let index = 0; index < item.count; index++) {
+        const bar = new Bar(item.row, item.col + index);
+        this.drawAndAddMap(bar);
+      }
+    });
+  }
+
+  private drawGold(stageNumber: number) {
+    stageDrawDict[stageNumber]["Gold"].forEach((item: blueprint): void => {
+      const gold = new Gold(item.row, item.col);
+      this.gameplay.addGoldList(gold);
+      this.drawAndAddRing(gold);
+    });
+  }
+
+  private drawPlayer(stageNumber: number) {
+    stageDrawDict[stageNumber]["Player"].forEach((item: blueprint): void => {
+      const player = new Player(item.row, item.col);
+      this.gameplay.playerChange(player);
+      this.drawAndAddRing(player);
+    });
+  }
+
+  private drawEnemy(stageNumber: number) {
+    stageDrawDict[stageNumber]["Enemy"].forEach((item: blueprint): void => {
+      const enemy = new Enemy(item.row, item.col);
+      this.gameplay.addEnemyList(enemy);
+      this.drawAndAddRing(enemy);
+    });
+  }
+
+  public drawWLadder() {
+    const stageNumber = this.gameplay.getState.stageNumber;
+    stageDrawDict[stageNumber]["WLadder"].forEach((item: blueprint): void => {
+      for (let index = 0; index < item.count; index++) {
+        const ladder = new Ladder(item.row + index, item.col);
+        this.drawAndAddMap(ladder);
+      }
+    });
+  }
+
+  private initMap(stageNumber: number) {
+    this.drawSoil(stageNumber);
+    this.drawConc(stageNumber);
+    this.drawLadder(stageNumber);
+    this.drawBar(stageNumber);
+  }
+
+  private initRing(stageNumber: number) {
+    this.drawPlayer(stageNumber);
+    this.drawEnemy(stageNumber);
+    this.drawGold(stageNumber);
+  }
+
+  public drawInitStage() {
+    const stageNumber = this.gameplay.getState.stageNumber;
+    this.initMap(stageNumber);
+    this.initRing(stageNumber);
+  }
+
+  public eraseAndRemoveRing(element: RingElement) {
+    if (this.checkBorders(element.Row, element.Col)) {
+      this.visualRing.erase(element);
+      this.ring.removeRing(element);
+    }
+  }
+
+  public eraseAndRemoveMap(element: MapElement) {
+    if (this.checkBorders(element.Row, element.Col)) {
+      this.visualRing.erase(element);
+      this.ring.removeMap(element);
+    }
+  }
+
+  public drawAndAddRing(element: RingElement) {
+    if (this.checkBorders(element.Row, element.Col)) {
+      this.ring.addRing(element);
+      this.visualRing.draw(element);
+    }
+  }
+
+  public eraseAndDraw(element: Element) {
+    if (this.checkBorders(element.Row, element.Col)) {
+      this.visualRing.erase(element);
+      this.visualRing.draw(element);
+    }
+  }
+
+  public drawAndAddMap(element: MapElement) {
+    if (this.checkBorders(element.Row, element.Col)) {
+      this.ring.addMap(element);
+      this.visualRing.draw(element);
+    }
+  }
+
+  public getRingElement(row: number, col: number): RingElement | undefined {
+    if (this.checkBorders(row, col)) {
+      return this.ring.RingElement(row, col);
+    }
+    return undefined;
+  }
+
+  public getMapElement(row: number, col: number): MapElement | undefined {
+    if (this.checkBorders(row, col)) {
+      return this.ring.MapElement(row, col);
+    }
+    return undefined;
+  }
+
+  public checkBorders(row: number, col: number): boolean {
+    if (row < 0 || row >= this._RingRow) {
+      /*console.error(
+        "Invalid Object request: " + row + " is more than " + this._RingRow,
+      );*/
+      return false;
+    }
+    if (col < 0 || col >= this._RingCol) {
+      /*console.error(
+        "Invalid Object request: " + col + " is more than " + this._RingCol,
+      );*/
+      return false;
+    }
+    return true;
   }
 }
 
-export function resetEnemy(
-  row: number,
-  col: number,
-  targetId: number,
-  elementId: string,
-) {
-  const $enemy = $(elementId).remove();
-  const enemyElement: HTMLDivElement = $enemy.get(0) as HTMLDivElement;
-  removeObject(enemyElement, row, col, targetId);
-}
+export const stageDrawDict: StageDrawDict = {
+  1: {
+    Soil: [
+      { row: 2, col: 5, count: 7 } as blueprint,
+      { row: 20, col: 5, count: 17 } as blueprint,
+      { row: 28, col: 0, count: 60 } as blueprint,
+      { row: 17, col: 25, count: 31 } as blueprint,
+      { row: 5, col: 25, count: 20 } as blueprint,
+      { row: 11, col: 20, count: 5 } as blueprint,
+      { row: 5, col: 50, count: 5 } as blueprint,
+    ],
+    Ladder: [
+      { row: 20, col: 14, count: 8 } as blueprint,
+      { row: 2, col: 10, count: 18 } as blueprint,
+      { row: 17, col: 50, count: 11 } as blueprint,
+      { row: 5, col: 40, count: 12 } as blueprint,
+    ],
+    Player: [{ row: 10, col: 17, count: 1 } as blueprint],
+    Enemy: [
+      { row: 25, col: 10, count: 1 } as blueprint,
+      { row: 23, col: 55, count: 1 } as blueprint,
+      { row: 2, col: 40, count: 1 } as blueprint,
+      { row: 1, col: 11, count: 1 } as blueprint,
+    ],
+    Bar: [
+      { row: 8, col: 11, count: 29 } as blueprint,
+      { row: 16, col: 11, count: 15 } as blueprint,
+      { row: 4, col: 45, count: 7 } as blueprint,
+    ],
+    Gold: [
+      { row: 4, col: 35, count: 1 } as blueprint,
+      { row: 27, col: 40, count: 1 } as blueprint,
+      { row: 19, col: 20, count: 1 } as blueprint,
+      { row: 1, col: 6, count: 1 } as blueprint,
+      { row: 10, col: 22, count: 1 } as blueprint,
+      { row: 4, col: 54, count: 1 } as blueprint,
+      { row: 27, col: 11, count: 1 } as blueprint,
+    ],
+    Conc: [{ row: 29, col: 0, count: 60 } as blueprint],
+    WLadder: [{ row: 0, col: 30, count: 5 } as blueprint],
+  },
+};

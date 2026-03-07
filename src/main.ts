@@ -1,16 +1,44 @@
 import $ from "jquery";
-import {
-  body_keydown,
-  body_keyup,
-  repeatTouchInput,
-} from "./element/player/movement.ts";
-import { Ring } from "./element/ring/ring.ts";
-import { LevelInit } from "./../src/common/stage.ts";
-import { playerRepeat } from "./element/player/player.ts";
-import { goldRepeat } from "./element/gold/gold.ts";
-import { enemyRepeat } from "./element/enemy/enemy.ts";
-import { Rules } from "./../src/common/Conditions.ts";
-import { addSong } from "./../src/audio/audio.ts";
+import { Gameplay } from "./common/gameplay";
+export class Game {
+  constructor(
+    private gameplay: Gameplay = new Gameplay(),
+
+    //menu
+    //..
+  ) {}
+
+  public get getGameplay() {
+    return this.gameplay;
+  }
+  public gameInit() {}
+
+  public body_keydown(e: JQuery.Event): void {
+    switch (e.which) {
+      case 37: // LEFT
+        this.gameplay.playerGoLeft();
+        break;
+      case 38: // UP
+        this.gameplay.playerGoUp();
+        break;
+      case 39: // RIGHT
+        this.gameplay.playerGoRight();
+        break;
+      case 40: // DOWN
+        this.gameplay.playerGoDown();
+        break;
+      case 69: // dig right
+        this.gameplay.playerDigRight();
+        break;
+      case 81: // dig left
+        this.gameplay.playerDigLeft();
+        break;
+    }
+  }
+  public body_keyup(e: JQuery.Event) {
+    this.gameplay.playerStandStill();
+  }
+}
 
 function checkOrientation(): void {
   if (window.innerHeight > window.innerWidth) {
@@ -18,27 +46,35 @@ function checkOrientation(): void {
   }
 }
 
-$(document).ready(function() {
-    window.addEventListener("resize", checkOrientation);
-    
-    const $parent = $("#app");
-    const ring = new Ring();
-    $parent.prepend(ring.getRingObject());
+$(document).ready(function () {
+  window.addEventListener("resize", checkOrientation);
 
-    $("body").on("keydown", body_keydown);
-    $("body").on("keyup", body_keyup);
-    addSong();
-    ($("#backgroundMusic")[0] as HTMLAudioElement).play();
+  const game = new Game();
+  $("#app").prepend(game.getGameplay.getStage.getVisualRing.ringObject);
+  $("body").on("keydown", (event) => {
+    game.body_keydown(event);
+  });
+  $("body").on("keyup", (event) => {
+    game.body_keyup(event);
+  });
 
-    LevelInit( ring );
+  //addSong();
+  //($("#backgroundMusic")[0] as HTMLAudioElement).play();
+  game.getGameplay.LevelInit();
 
-    setInterval(repeat, 200);
-})
+  function repeat(): void {
+    game.getGameplay.Rules();
+    game.getGameplay.getPlayer.updLogState(game.getGameplay.getStage);
+    game.getGameplay.playerFalling();
+    game.getGameplay.enemyMove();
+    game.getGameplay.goldCheck();
 
-function repeat(): void {
-  repeatTouchInput();
-  playerRepeat();
-  enemyRepeat();
-  goldRepeat();
-  Rules();
-}
+    //repeatTouchInput();
+    //gameElement.player?.fall();
+    //enemyRepeat();
+    //goldRepeat();
+    //Rules();
+  }
+
+  setInterval(repeat, 200);
+});
