@@ -1,12 +1,16 @@
 import $ from "jquery";
 import { Gameplay } from "./common/gameplay";
+import { Song } from "./audio/audio";
 export class Game {
   constructor(
     private gameplay: Gameplay = new Gameplay(),
+    private song: Song = new Song(),
 
     //menu
     //..
-  ) {}
+  ) {
+    this.song.play();
+  }
 
   public get getGameplay() {
     return this.gameplay;
@@ -58,8 +62,6 @@ $(document).ready(function () {
     game.body_keyup(event);
   });
 
-  //addSong();
-  //($("#backgroundMusic")[0] as HTMLAudioElement).play();
   game.getGameplay.LevelInit();
 
   function repeat(): void {
@@ -70,10 +72,6 @@ $(document).ready(function () {
     game.getGameplay.goldCheck();
 
     //repeatTouchInput();
-    //gameElement.player?.fall();
-    //enemyRepeat();
-    //goldRepeat();
-    //Rules();
   }
 
   setInterval(repeat, 200);

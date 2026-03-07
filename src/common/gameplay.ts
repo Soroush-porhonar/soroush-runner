@@ -23,8 +23,6 @@ export class Gameplay {
   public reset() {
     this.enemies = [];
     this.golds = [];
-    console.log(this.enemies);
-    debugger;
   }
 
   public addGoldList(gold: Gold) {
@@ -132,27 +130,19 @@ export class Gameplay {
     return false;
   }
 
-  private enemyNextStep(enemy: Enemy) {
-    const next = this.bfs.findNextStepBFS(enemy, this.player);
-    if (next === null) return next;
-    if (this.enemyMoveCondition(next, enemy)) return next;
-    return null;
-  }
-
   private EnemyGoNext(enemy: Enemy) {
-    const nextStep = this.enemyNextStep(enemy);
+    const nextStep = this.bfs.findNextStepBFS(enemy, this.player);
     if (!nextStep) return;
-    this.getStage.eraseAndRemoveRing(enemy);
-    enemy.changePos(nextStep.row, nextStep.col);
-    this.getStage.drawAndAddRing(enemy);
+    if (this.enemyMoveCondition(nextStep, enemy)) {
+      this.getStage.eraseAndRemoveRing(enemy);
+      enemy.changePos(nextStep.row, nextStep.col);
+      this.getStage.drawAndAddRing(enemy);
+    }
   }
 
   private enemyStuckCondition(enemy: Enemy) {
-    if (
-      this.getStage.getMapElement(enemy.Row, enemy.Col)?.Id === ObjectId.Hole
-    ) {
+    if (this.getStage.getMapElement(enemy.Row, enemy.Col) instanceof Hole)
       return true;
-    }
 
     return false;
   }
@@ -164,8 +154,6 @@ export class Gameplay {
           if (this.enemyStuckCondition(enemy)) {
             this.EnemyGoNext(enemy);
             this.holeToSoil(enemy.Row + 1, enemy.Col);
-            console.log(this.getStage.getMapElement(enemy.Row + 1, enemy.Col));
-            debugger;
           }
         }, 2500);
       } else {
@@ -317,16 +305,19 @@ export class Gameplay {
     return false;
   }
   private WLadderCondition() {
-    return this.golds.length === 0;
+    const Wladder = this.stats.getWLadder();
+    const noGold = this.golds.length === 0;
+    return noGold && Wladder;
   }
 
   private winingRule(): void {
     if (this.WLadderCondition()) {
       this.stage.drawWLadder();
-      if (this.player.Row === -1) {
-        alert("╰(*°▽°*)╯ You won ╰(*°▽°*)╯");
-        this.stats.nextLevel();
-      }
+      this.stats.WLadderOn();
+    }
+    if (this.player.Row === -1) {
+      alert("╰(*°▽°*)╯ You won ╰(*°▽°*)╯");
+      this.stats.nextLevel();
     }
   }
   losingConditon() {
@@ -343,9 +334,7 @@ export class Gameplay {
       }
     }
   }
-  public getEnemies() {
-    return this.enemies;
-  }
+
   public Rules() {
     this.losingRule();
     this.winingRule();

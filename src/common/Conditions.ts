@@ -14,9 +14,12 @@ export class GameState {
     this.life--;
   }
 
-  public changeWladder() {
+  public WLadderOn() {
     this.Wladder = true;
     //draw wladder
+  }
+  public getWLadder() {
+    return this.Wladder;
   }
 
   public resetDefault() {
