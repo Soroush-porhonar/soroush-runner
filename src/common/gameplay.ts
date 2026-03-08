@@ -34,6 +34,21 @@ export class Gameplay {
     return this.stage;
   }
 
+  public GameElementInit() {
+    this.stage.ringObjectAdd();
+    this.stage.stageObjectAdd();
+    this.stage.footerObjectAdd();
+    this.stage.footerSpanObjectAdd();
+    this.stage.menuObjectAdd();
+  }
+
+  public checkpause() {
+    if (this.stats.getPause === true) {
+      this.stage.menuObjectdraw();
+      return;
+    }
+    this.stage.menuObjecterase();
+  }
   public goldCheck() {
     this.stage.getGolds.forEach((gold: Gold) => {
       if (this.goldClaimCondition(gold)) {
@@ -47,18 +62,10 @@ export class Gameplay {
   }
 
   private goldClaim(gold: Gold): void {
-    this.goldRemove(gold);
+    this.stage.goldRemove(gold);
     this.stats.ScoreAdd();
   }
-  private goldRemove(gold: Gold) {
-    this.stage.eraseAndRemoveRing(gold);
-    this.stage.goldRemoveList(gold);
-    this.stage.getEnemies.forEach((enemy) => {
-      if (enemy.GoldSlot === gold) {
-        enemy.goldResetSlot();
-      }
-    });
-  }
+
   private goldClaimCondition(gold: Gold): boolean {
     return (
       gold.Row === this.stage.getPlayer.Row &&
@@ -139,12 +146,14 @@ export class Gameplay {
     this.getStage.drawAndAddRing(enemy);
     this.stats.ScoreAdd();
   }
+
   private enemyGetupHole(enemy: Enemy) {
     if (this.enemyStuckCondition(enemy)) {
       this.EnemyGoNext(enemy);
       this.holeToSoil(enemy.Row + 1, enemy.Col);
     }
   }
+
   public playerAction() {
     switch (this.lastMove) {
       case Input.Still:
@@ -180,6 +189,7 @@ export class Gameplay {
       this.getStage.drawAndAddRing(this.stage.getPlayer);
     }
   }
+
   private playerGoLeft() {
     if (
       !this.getStage.checkBorders(
@@ -194,6 +204,7 @@ export class Gameplay {
       this.getStage.drawAndAddRing(this.stage.getPlayer);
     }
   }
+
   private playerGoUp() {
     if (
       !this.getStage.checkBorders(
@@ -208,6 +219,7 @@ export class Gameplay {
       this.getStage.drawAndAddRing(this.stage.getPlayer);
     }
   }
+
   private playerGoRight() {
     if (
       !this.getStage.checkBorders(
@@ -222,6 +234,7 @@ export class Gameplay {
       this.getStage.drawAndAddRing(this.stage.getPlayer);
     }
   }
+
   private playerGoDown() {
     if (
       !this.getStage.checkBorders(
@@ -236,6 +249,7 @@ export class Gameplay {
       this.getStage.drawAndAddRing(this.stage.getPlayer);
     }
   }
+
   private playerDigRight() {
     if (this.stage.getPlayer.digRightCondition(this.getStage))
       this.holeHandle(
@@ -243,6 +257,7 @@ export class Gameplay {
         this.stage.getPlayer.Col + 1,
       );
   }
+
   private playerDigLeft() {
     if (this.stage.getPlayer.digLeftCondition(this.getStage))
       this.holeHandle(
@@ -360,6 +375,7 @@ export class Gameplay {
       this.stats.WLadderOn();
     }
   }
+
   private WLadderCondition() {
     const Wladder = this.stats.getWLadder();
     const noGold = this.stage.getGolds.length === 0;
@@ -380,7 +396,7 @@ export class Gameplay {
 
   private losingRule(): void {
     if (this.losingConditon()) {
-      if (this.stats.hasLife()) {
+      if (this.stats.lifeHas()) {
         alert("O_O YOU DIED O_O");
         this.Levelreset();
       } else {
@@ -402,23 +418,23 @@ export class Gameplay {
     if (this.stats.getTime % 10 === 0)
       this.stage.getVisualRing.updateVisTime(this.stats.getTime / 10);
     this.stage.getVisualRing.updateVislife(this.stats.getlife);
-    this.stage.getVisualRing.updateVisScore(this.stats.getScore);
+    this.stage.getVisualRing.updateVisScore(this.stats.scoreGet);
   }
 
   private LevelInit(): void {
-    this.getState.resetDefault();
-    this.getStage.reset();
-    this.getStage.drawInitStage(this.stats.getStageNumber);
+    this.stats.resetDefault();
+    this.stage.reset();
+    this.stage.drawInitStage(this.stats.getStageNumber);
     this.Rules();
   }
   private Levelreset() {
     this.stats.sameLevel();
-    this.getStage.reset();
-    this.getStage.drawInitStage(this.stats.getStageNumber);
+    this.stage.reset();
+    this.stage.drawInitStage(this.stats.getStageNumber);
   }
   private Levelnext() {
     this.stats.nextLevel();
-    this.getStage.reset();
-    this.getStage.drawInitStage(this.stats.getStageNumber);
+    this.stage.reset();
+    this.stage.drawInitStage(this.stats.getStageNumber);
   }
 }

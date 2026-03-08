@@ -22,7 +22,7 @@ class Game {
     return this.gameplay;
   }
   private htmlReady() {
-    this.gameplay.getStage.getVisualRing.htmlElementInit();
+    this.gameplay.GameElementInit();
   }
   private keydownAdd() {
     //document.body.tabIndex = 0;
@@ -76,6 +76,7 @@ class Game {
   }
 
   public repeat(): void {
+    this.gameplay.checkpause();
     if (this.gameplay.getState.getPause) return;
 
     this.gameplay.updateFooter();

@@ -7,6 +7,7 @@ import { Soil } from "../ring/elements/soil/soil.ts";
 import { Conc } from "../ring/elements/concrete/conc.ts";
 import { Ladder } from "../ring/elements/ladder/ladder.ts";
 import { VisualRing, Element } from "./../ring/ring.ts";
+import $ from "jquery";
 
 export interface blueprint {
   row: number;
@@ -31,8 +32,8 @@ interface StageList {
 
 export class Stage {
   constructor(
-    private _RingRow: number = 30,
-    private _RingCol: number = 60,
+    protected _RingRow: number = 30,
+    protected _RingCol: number = 60,
     private enemies: Enemy[] = [],
     private golds: Gold[] = [],
     private player: Player = new Player(0, 0),
@@ -46,26 +47,41 @@ export class Stage {
     this.enemies = [];
     this.golds = [];
   }
-  public goldAddList(gold: Gold) {
+
+  private goldAddList(gold: Gold) {
     this.golds.push(gold);
   }
 
-  public enemyAddList(enemy: Enemy) {
+  private enemyAddList(enemy: Enemy) {
     this.enemies.push(enemy);
   }
 
-  public goldRemoveList(gold: Gold) {
+  private goldRemoveList(gold: Gold) {
     this.golds = this.golds.filter((item: Gold) => item !== gold);
   }
-  public playerChange(player: Player) {
+
+  public goldRemove(gold: Gold) {
+    this.eraseAndRemoveRing(gold);
+    this.goldRemoveList(gold);
+    this.getEnemies.forEach((enemy) => {
+      if (enemy.GoldSlot === gold) {
+        enemy.goldResetSlot();
+      }
+    });
+  }
+
+  private playerChange(player: Player) {
     this.player = player;
   }
+
   public get getPlayer() {
     return this.player;
   }
+
   public get getEnemies() {
     return this.enemies;
   }
+
   public get getGolds() {
     return this.golds;
   }
@@ -77,11 +93,38 @@ export class Stage {
   public get getVisualRing() {
     return this.visualRing;
   }
+
   public get get_RingRow() {
     return this._RingRow;
   }
+
   public get get_RingCol() {
     return this._RingCol;
+  }
+
+  public ringObjectAdd() {
+    $("#app").prepend(this.visualRing.ringObject);
+  }
+  public footerObjectAdd() {
+    $("#ring").append(this.visualRing.footerObject);
+  }
+  public stageObjectAdd() {
+    $("#ring").append(this.visualRing.stageObject);
+  }
+  public footerSpanObjectAdd() {
+    $("#footer").append(this.visualRing.timeObject);
+    $("#footer").append(this.visualRing.lifeObject);
+    $("#footer").append(this.visualRing.scoreObject);
+  }
+  public menuObjectAdd() {
+    $("#app").append(this.visualRing.menuObject);
+  }
+  public menuObjectdraw() {
+    console.log("draw");
+    $("#menu").css("visibility", "visible");
+  }
+  public menuObjecterase() {
+    $("#menu").css("visibility", "hidden");
   }
 
   private drawSoil(stageNumber: number) {

@@ -42,9 +42,6 @@ export class GameState {
   public get getPause() {
     return this.pause;
   }
-  public continue() {
-    this.pause = false;
-  }
   public pauseChange() {
     this.pause = !this.pause;
   }
@@ -57,11 +54,11 @@ export class GameState {
   public nextStageNumber() {
     this.stageNumber++;
   }
-  public hasLife() {
+  public lifeHas() {
     if (this.life > 1) return true;
     return false;
   }
-  public get getScore() {
+  public get scoreGet() {
     return this.score;
   }
 }

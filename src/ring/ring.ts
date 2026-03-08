@@ -152,32 +152,39 @@ export class VisualRing {
       .attr("id", "score")
       .addClass("footerSpan")
       .css({}),
+    private $_menu: JQuery<HTMLElement> = $("<div></div>")
+      .attr("id", "menu")
+      .addClass("menu")
+      .css({}),
   ) {
     this.reset();
   }
   public reset(): void {
     this.$_stage.empty();
   }
-  public htmlElementInit() {
-    this.ringObjectAdd();
-    this.stageObjectAdd();
-    this.footerObjectAdd();
-    this.footerSpanObjectAdd();
+  public get ringObject() {
+    return this.$_RING[0];
   }
-  private ringObjectAdd() {
-    $("#app").prepend(this.$_RING[0]);
+  public get stageObject() {
+    return this.$_stage[0];
   }
-  private footerObjectAdd() {
-    $("#ring").append(this.$_footer[0]);
+  public get footerObject() {
+    return this.$_footer[0];
   }
-  private stageObjectAdd() {
-    $("#ring").append(this.$_stage[0]);
+  public get timeObject() {
+    return this.$_time[0];
   }
-  private footerSpanObjectAdd() {
-    $("#footer").append(this.$_time[0]);
-    $("#footer").append(this.$_life[0]);
-    $("#footer").append(this.$_score[0]);
+  public get lifeObject() {
+    return this.$_life[0];
   }
+  public get scoreObject() {
+    return this.$_score[0];
+  }
+  public get menuObject() {
+    this.$_menu.text("paused");
+    return this.$_menu[0];
+  }
+
   public draw(element: Element): void {
     // visual
     const dom = element.createDom();
