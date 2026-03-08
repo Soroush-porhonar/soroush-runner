@@ -1,6 +1,6 @@
 import { Enemy } from "./enemy.ts";
 import type { Player } from "../player/player.ts";
-import { ObjectId } from "../../ring";
+import { Empty, ObjectId } from "../../ring";
 import type { Stage } from "../../../common/stage.ts";
 export type Pos = { row: number; col: number };
 type Node = Pos & { parent: Node | null };
@@ -83,8 +83,10 @@ export class Bfs {
 
     /* ========= UP (ladder only) ========= */
 
-    if (this.isLadder(r, c) || this.isLadder(r + 1, c)) {
+    if (this.isLadder(r, c)) {
       neighbors.push({ row: r - 1, col: c });
+    }
+    if (this.isLadder(r + 1, c)) {
       neighbors.push({ row: r + 1, col: c });
     }
     if (this.isHole(r, c)) {
@@ -97,10 +99,10 @@ export class Bfs {
   public findNextStepBFS(enemy: Enemy, player: Player): Pos | null {
     const start: Pos = { row: enemy.Row, col: enemy.Col };
     let goal: Pos = { row: player.Row, col: player.Col };
+
     for (
       let i = 0;
-      this.stage.getMapElement(player.Row + i, player.Col)?.Id ===
-      ObjectId.Empty;
+      this.stage.getMapElement(player.Row + i, player.Col) instanceof Empty;
       i++
     ) {
       goal = { row: player.Row + i, col: player.Col };
@@ -128,6 +130,7 @@ export class Bfs {
       const neighbors = this.getNeighbors(current);
 
       for (const n of neighbors) {
+        if (!this.stage.checkBorders(n.row, n.col)) continue;
         if (visited[n.row][n.col]) continue;
 
         visited[n.row][n.col] = true;

@@ -6,7 +6,6 @@ import { Ring, type MapElement, type RingElement } from "./../ring/ring.ts";
 import { Soil } from "../ring/elements/soil/soil.ts";
 import { Conc } from "../ring/elements/concrete/conc.ts";
 import { Ladder } from "../ring/elements/ladder/ladder.ts";
-import { Gameplay } from "./gameplay.ts";
 import { VisualRing, Element } from "./../ring/ring.ts";
 
 export interface blueprint {
@@ -238,8 +237,48 @@ export class Stage {
   }
 }
 
-export const stageDrawDict: StageDrawDict = {
+const stageDrawDict: StageDrawDict = {
   1: {
+    Soil: [
+      { row: 2, col: 5, count: 7 } as blueprint,
+      { row: 20, col: 5, count: 17 } as blueprint,
+      { row: 28, col: 0, count: 60 } as blueprint,
+      { row: 17, col: 25, count: 31 } as blueprint,
+      { row: 5, col: 25, count: 20 } as blueprint,
+      { row: 11, col: 20, count: 5 } as blueprint,
+      { row: 5, col: 50, count: 5 } as blueprint,
+    ],
+    Ladder: [
+      { row: 20, col: 14, count: 8 } as blueprint,
+      { row: 2, col: 10, count: 18 } as blueprint,
+      { row: 17, col: 50, count: 11 } as blueprint,
+      { row: 5, col: 40, count: 12 } as blueprint,
+    ],
+    Player: [{ row: 10, col: 17, count: 1 } as blueprint],
+    Enemy: [
+      { row: 25, col: 10, count: 1 } as blueprint,
+      { row: 23, col: 55, count: 1 } as blueprint,
+      { row: 2, col: 40, count: 1 } as blueprint,
+      //{ row: 1, col: 11, count: 1 } as blueprint,
+    ],
+    Bar: [
+      { row: 8, col: 11, count: 29 } as blueprint,
+      { row: 16, col: 11, count: 15 } as blueprint,
+      { row: 4, col: 45, count: 7 } as blueprint,
+    ],
+    Gold: [
+      { row: 4, col: 35, count: 1 } as blueprint,
+      { row: 27, col: 40, count: 1 } as blueprint,
+      { row: 19, col: 20, count: 1 } as blueprint,
+      { row: 1, col: 6, count: 1 } as blueprint,
+      { row: 10, col: 22, count: 1 } as blueprint,
+      { row: 4, col: 54, count: 1 } as blueprint,
+      { row: 27, col: 11, count: 1 } as blueprint,
+    ],
+    Conc: [{ row: 29, col: 0, count: 60 } as blueprint],
+    WLadder: [{ row: 0, col: 30, count: 5 } as blueprint],
+  },
+  2: {
     Soil: [
       { row: 2, col: 5, count: 7 } as blueprint,
       { row: 20, col: 5, count: 17 } as blueprint,

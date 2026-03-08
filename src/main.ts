@@ -1,7 +1,9 @@
 import $ from "jquery";
 import { Gameplay } from "./common/gameplay";
 import { Song } from "./audio/audio";
-export class Game {
+import { Input } from "./ring/elements/player/player";
+
+class Game {
   constructor(
     private gameplay: Gameplay = new Gameplay(),
     private song: Song = new Song(),
@@ -9,70 +11,87 @@ export class Game {
     //menu
     //..
   ) {
+    this.htmlReady();
+    this.keydownAdd();
     this.song.play();
+    this.checkRotate();
+    this.intervalStart();
   }
 
   public get getGameplay() {
     return this.gameplay;
   }
-  public gameInit() {}
+  private htmlReady() {
+    this.gameplay.getStage.getVisualRing.htmlElementInit();
+  }
+  private keydownAdd() {
+    //document.body.tabIndex = 0;
+    window.addEventListener("load", () => document.body.focus());
+    document.body.addEventListener("keydown", (event) => {
+      this.body_keydown(event);
+    });
+  }
+  private checkRotate() {
+    window.addEventListener("resize", () => {
+      if (window.innerHeight > window.innerWidth)
+        alert("Please rotate your device to play in landscape mode.");
+    });
+  }
 
-  public body_keydown(e: JQuery.Event): void {
-    switch (e.which) {
-      case 37: // LEFT
-        this.gameplay.playerGoLeft();
+  private intervalStart() {
+    setInterval(() => this.repeat(), 100);
+  }
+  private body_keydown(e: KeyboardEvent): void {
+    console.log(e);
+    // if (e.repeat) return;
+    switch (e.code) {
+      case "ArrowLeft":
+      case "KeyA":
+        this.gameplay.overWriteLastMove(Input.Left);
         break;
-      case 38: // UP
-        this.gameplay.playerGoUp();
+      case "ArrowRight":
+      case "KeyD":
+        this.gameplay.overWriteLastMove(Input.Right);
         break;
-      case 39: // RIGHT
-        this.gameplay.playerGoRight();
+      case "ArrowUp":
+      case "KeyW":
+        this.gameplay.overWriteLastMove(Input.Up);
         break;
-      case 40: // DOWN
-        this.gameplay.playerGoDown();
+      case "ArrowDown":
+      case "KeyS":
+        this.gameplay.overWriteLastMove(Input.Down);
         break;
-      case 69: // dig right
-        this.gameplay.playerDigRight();
+      case "KeyE":
+      case "KeyK":
+        this.gameplay.overWriteLastMove(Input.DigRight);
         break;
-      case 81: // dig left
-        this.gameplay.playerDigLeft();
+      case "KeyQ":
+      case "KeyJ":
+        this.gameplay.overWriteLastMove(Input.DigLeft);
+        break;
+      case "Escape":
+        this.gameplay.getState.pauseChange();
         break;
     }
   }
-  public body_keyup(e: JQuery.Event) {
-    this.gameplay.playerStandStill();
-  }
-}
 
-function checkOrientation(): void {
-  if (window.innerHeight > window.innerWidth) {
-    alert("Please rotate your device to play in landscape mode.");
+  public repeat(): void {
+    if (this.gameplay.getState.getPause) return;
+
+    this.gameplay.updateFooter();
+    this.gameplay.Rules();
+    this.gameplay.getStage.getPlayer.updLogState(this.gameplay.getStage);
+
+    if (this.gameplay.getState.getTime % 2 === 0) {
+      this.gameplay.playerFalling();
+      this.gameplay.playerAction();
+    }
+    if (this.gameplay.getState.getTime % 3 === 0) this.gameplay.enemyMove();
+    this.gameplay.goldCheck();
+    this.gameplay.getState.addTime();
   }
 }
 
 $(document).ready(function () {
-  window.addEventListener("resize", checkOrientation);
-
-  const game = new Game();
-  $("#app").prepend(game.getGameplay.getStage.getVisualRing.ringObject);
-  $("body").on("keydown", (event) => {
-    game.body_keydown(event);
-  });
-  $("body").on("keyup", (event) => {
-    game.body_keyup(event);
-  });
-
-  game.getGameplay.LevelInit();
-
-  function repeat(): void {
-    game.getGameplay.Rules();
-    game.getGameplay.getStage.getPlayer.updLogState(game.getGameplay.getStage);
-    game.getGameplay.playerFalling();
-    game.getGameplay.enemyMove();
-    game.getGameplay.goldCheck();
-
-    //repeatTouchInput();
-  }
-
-  setInterval(repeat, 200);
+  new Game();
 });

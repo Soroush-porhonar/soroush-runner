@@ -18,6 +18,8 @@ export const enum Input {
   Down = "down",
   Right = "right",
   Left = "left",
+  DigRight = "digRight",
+  DigLeft = "digLeft",
 }
 
 export class Player extends Element {
@@ -174,13 +176,8 @@ export class Player extends Element {
   private VisDown() {
     this.updVisState(Input.Down);
   }
-
-  public digLeft() {
-    //handleHoleChar(rightAxe.row, rightAxe.col);
-  }
-
-  public digRight() {
-    //handleHoleChar(rightAxe.row, rightAxe.col);
+  public goStill() {
+    this.updVisState(Input.Still);
   }
 
   public updVisState(input: Input) {

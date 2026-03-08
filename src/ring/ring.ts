@@ -132,14 +132,51 @@ export class VisualRing {
       .attr("id", "ring")
       .addClass("ring")
       .css({}),
+    private $_stage: JQuery<HTMLElement> = $("<div></div>")
+      .attr("id", "stage")
+      .addClass("stage")
+      .css({}),
+    private $_footer: JQuery<HTMLElement> = $("<footer></footer>")
+      .attr("id", "footer")
+      .addClass("footer")
+      .css({}),
+    private $_time: JQuery<HTMLElement> = $("<span></span>")
+      .attr("id", "time")
+      .addClass("footerSpan")
+      .css({}),
+    private $_life: JQuery<HTMLElement> = $("<span></span>")
+      .attr("id", "life")
+      .addClass("footerSpan")
+      .css({}),
+    private $_score: JQuery<HTMLElement> = $("<span></span>")
+      .attr("id", "score")
+      .addClass("footerSpan")
+      .css({}),
   ) {
     this.reset();
   }
   public reset(): void {
-    this.$_RING.empty();
+    this.$_stage.empty();
   }
-  public get ringObject(): HTMLDivElement {
-    return this.$_RING[0] as HTMLDivElement;
+  public htmlElementInit() {
+    this.ringObjectAdd();
+    this.stageObjectAdd();
+    this.footerObjectAdd();
+    this.footerSpanObjectAdd();
+  }
+  private ringObjectAdd() {
+    $("#app").prepend(this.$_RING[0]);
+  }
+  private footerObjectAdd() {
+    $("#ring").append(this.$_footer[0]);
+  }
+  private stageObjectAdd() {
+    $("#ring").append(this.$_stage[0]);
+  }
+  private footerSpanObjectAdd() {
+    $("#footer").append(this.$_time[0]);
+    $("#footer").append(this.$_life[0]);
+    $("#footer").append(this.$_score[0]);
   }
   public draw(element: Element): void {
     // visual
@@ -157,11 +194,21 @@ export class VisualRing {
       height: visHeight + "%",
     });
 
-    this.$_RING.append(dom);
+    this.$_stage.append(dom);
   }
 
   public erase(element: Element): void {
     const id = element.findId;
     $(`#${id}.${element.Id}`).remove();
+  }
+
+  public updateVisTime(time: number) {
+    this.$_time.text("time : " + time);
+  }
+  public updateVislife(life: number) {
+    this.$_life.text(" life : " + life);
+  }
+  public updateVisScore(score: number) {
+    this.$_score.text("score : " + score);
   }
 }
