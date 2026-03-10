@@ -6,6 +6,7 @@ import { GameState } from "./conditions";
 import { Soil } from "../ring/elements/soil/soil";
 import { Bfs, type Pos } from "../ring/elements/enemy/pathfinding";
 import { Stage } from "./stage";
+import { Alert } from "../ring/ring";
 
 export class Gameplay {
   constructor(
@@ -16,17 +17,34 @@ export class Gameplay {
   ) {
     this.LevelInit();
   }
+  public goldRemove(gold: Gold) {
+    this.stage.eraseAndRemoveRing(gold);
+    this.stage.goldRemoveList(gold);
+    this.stage.getEnemies.forEach((enemy) => {
+      if (enemy.GoldSlot === gold) {
+        enemy.goldResetSlot();
+      }
+    });
+  }
+  public alertSkip() {
+    if (this.getState.getPause) {
+      this.getStage.alertObjecterase();
+      this.getState.unpauseNow();
+    }
+  }
 
+  public alertPause() {
+    if (!this.getState.getPause) {
+      this.getStage.alertObjectdraw(Alert.Pause);
+      this.getState.pauseNow();
+    }
+  }
   public overWriteLastMove(keyCode: Input) {
     this.lastMove = keyCode;
   }
   public get getLastMove() {
     return this.lastMove;
   }
-  public get getRing() {
-    return this.getStage.getRing;
-  }
-
   public get getState() {
     return this.stats;
   }
@@ -34,21 +52,16 @@ export class Gameplay {
     return this.stage;
   }
 
-  public GameElementInit() {
+  public gameObjectInit() {
     this.stage.ringObjectAdd();
     this.stage.stageObjectAdd();
+    this.stage.headerObjectAdd();
     this.stage.footerObjectAdd();
     this.stage.footerSpanObjectAdd();
-    this.stage.menuObjectAdd();
+    this.stage.headerSpanObjectAdd();
+    this.stage.alertObjectAdd();
   }
 
-  public checkpause() {
-    if (this.stats.getPause === true) {
-      this.stage.menuObjectdraw();
-      return;
-    }
-    this.stage.menuObjecterase();
-  }
   public goldCheck() {
     this.stage.getGolds.forEach((gold: Gold) => {
       if (this.goldClaimCondition(gold)) {
@@ -56,13 +69,13 @@ export class Gameplay {
       }
       this.stage.getEnemies.forEach((enemy: Enemy) => {
         if (this.goldPickupCondition(gold, enemy)) this.goldPickup(gold, enemy);
-        if (this.goldCarryCondition(enemy)) this.carryGold(enemy);
+        if (this.goldCarryCondition(enemy)) this.goldCarry(enemy);
       });
     });
   }
 
   private goldClaim(gold: Gold): void {
-    this.stage.goldRemove(gold);
+    this.goldRemove(gold);
     this.stats.ScoreAdd();
   }
 
@@ -88,7 +101,7 @@ export class Gameplay {
     gold.changePos(enemy.Row - 1, enemy.Col);
     this.getStage.drawAndAddRing(gold);
   }
-  private carryGold(enemy: Enemy) {
+  private goldCarry(enemy: Enemy) {
     const gold = enemy.GoldSlot;
     if (gold === undefined) return;
     this.getStage.eraseAndRemoveRing(gold);
@@ -178,80 +191,80 @@ export class Gameplay {
         this.playerDigLeft();
         break;
     }
-    this.overWriteLastMove(Input.Still);
+    //this.overWriteLastMove(Input.Still);
     //this.playerStandStill();
   }
 
   public playerFalling() {
     if (this.stage.getPlayer.fallCondition()) {
-      this.getStage.eraseAndRemoveRing(this.stage.getPlayer);
+      this.stage.eraseAndRemoveRing(this.stage.getPlayer);
       this.stage.getPlayer.goDown();
-      this.getStage.drawAndAddRing(this.stage.getPlayer);
+      this.stage.drawAndAddRing(this.stage.getPlayer);
     }
   }
 
   private playerGoLeft() {
     if (
-      !this.getStage.checkBorders(
+      !this.stage.checkBorders(
         this.stage.getPlayer.Row,
         this.stage.getPlayer.Col - 1,
       )
     )
       return;
-    if (this.stage.getPlayer.goLeftCondition(this.getStage)) {
-      this.getStage.eraseAndRemoveRing(this.stage.getPlayer);
+    if (this.stage.getPlayer.goLeftCondition(this.stage)) {
+      this.stage.eraseAndRemoveRing(this.stage.getPlayer);
       this.stage.getPlayer.goLeft();
-      this.getStage.drawAndAddRing(this.stage.getPlayer);
+      this.stage.drawAndAddRing(this.stage.getPlayer);
     }
   }
 
   private playerGoUp() {
     if (
-      !this.getStage.checkBorders(
+      !this.stage.checkBorders(
         this.stage.getPlayer.Row,
         this.stage.getPlayer.Col - 1,
       )
     )
       return;
     if (this.stage.getPlayer.goUpCondition()) {
-      this.getStage.eraseAndRemoveRing(this.stage.getPlayer);
+      this.stage.eraseAndRemoveRing(this.stage.getPlayer);
       this.stage.getPlayer.goUp();
-      this.getStage.drawAndAddRing(this.stage.getPlayer);
+      this.stage.drawAndAddRing(this.stage.getPlayer);
     }
   }
 
   private playerGoRight() {
     if (
-      !this.getStage.checkBorders(
+      !this.stage.checkBorders(
         this.stage.getPlayer.Row,
         this.stage.getPlayer.Col + 1,
       )
     )
       return;
-    if (this.stage.getPlayer.goRightCondition(this.getStage)) {
-      this.getStage.eraseAndRemoveRing(this.stage.getPlayer);
+    if (this.stage.getPlayer.goRightCondition(this.stage)) {
+      this.stage.eraseAndRemoveRing(this.stage.getPlayer);
       this.stage.getPlayer.goRight();
-      this.getStage.drawAndAddRing(this.stage.getPlayer);
+      this.stage.drawAndAddRing(this.stage.getPlayer);
     }
   }
 
   private playerGoDown() {
     if (
-      !this.getStage.checkBorders(
+      !this.stage.checkBorders(
         this.stage.getPlayer.Row + 1,
         this.stage.getPlayer.Col,
       )
     )
       return;
-    if (this.stage.getPlayer.goDownCondition(this.getStage)) {
-      this.getStage.eraseAndRemoveRing(this.stage.getPlayer);
+    if (this.stage.getPlayer.goDownCondition(this.stage)) {
+      this.stage.eraseAndRemoveRing(this.stage.getPlayer);
       this.stage.getPlayer.goDown();
-      this.getStage.drawAndAddRing(this.stage.getPlayer);
+      this.stage.drawAndAddRing(this.stage.getPlayer);
     }
   }
 
   private playerDigRight() {
-    if (this.stage.getPlayer.digRightCondition(this.getStage))
+    if (this.stage.getPlayer.digRightCondition(this.stage))
       this.holeHandle(
         this.stage.getPlayer.Row + 1,
         this.stage.getPlayer.Col + 1,
@@ -259,7 +272,7 @@ export class Gameplay {
   }
 
   private playerDigLeft() {
-    if (this.stage.getPlayer.digLeftCondition(this.getStage))
+    if (this.stage.getPlayer.digLeftCondition(this.stage))
       this.holeHandle(
         this.stage.getPlayer.Row + 1,
         this.stage.getPlayer.Col - 1,
@@ -267,17 +280,17 @@ export class Gameplay {
   }
 
   private playerGoStill() {
-    this.stage.getPlayer.updLogState(this.getStage);
+    this.stage.getPlayer.updLogState(this.stage);
     this.stage.getPlayer.goStill();
-    this.getStage.eraseAndDraw(this.stage.getPlayer);
+    this.stage.eraseAndDraw(this.stage.getPlayer);
   }
 
   public holeHandle(row: number, col: number) {
     this.soilTohole(row, col);
     setTimeout(() => {
-      const hole = this.getStage.getMapElement(row, col);
+      const hole = this.stage.getMapElement(row, col);
       if (hole instanceof Hole) {
-        const enemy = this.getStage.getRingElement(row, col);
+        const enemy = this.stage.getRingElement(row, col);
         if (enemy instanceof Enemy) {
           this.enemyRespawn(enemy);
         }
@@ -287,25 +300,25 @@ export class Gameplay {
   }
 
   private soilTohole(row: number, col: number) {
-    const soil = this.getStage.getMapElement(row, col);
+    const soil = this.stage.getMapElement(row, col);
     if (soil instanceof Soil) {
-      this.getStage.eraseAndRemoveMap(soil);
+      this.stage.eraseAndRemoveMap(soil);
       const hole: Hole = new Hole(row, col);
-      this.getStage.drawAndAddMap(hole);
+      this.stage.drawAndAddMap(hole);
     }
   }
 
   private async holeToSoil(row: number, col: number): Promise<void> {
     const soil: Soil = new Soil(row, col);
-    const hole: Hole | undefined = this.getStage.getMapElement(row, col);
+    const hole: Hole | undefined = this.stage.getMapElement(row, col);
     if (hole instanceof Hole) {
-      const enemy = this.getStage.getRingElement(row, col);
+      const enemy = this.stage.getRingElement(row, col);
       const enemyInHole = enemy instanceof Enemy;
       if (enemyInHole) {
         await this.waitUntilNotOccupied(() => this.notOccupied(row - 1, col));
       }
-      this.getStage.eraseAndRemoveMap(hole);
-      this.getStage.drawAndAddMap(soil);
+      this.stage.eraseAndRemoveMap(hole);
+      this.stage.drawAndAddMap(soil);
     }
   }
 
@@ -324,27 +337,17 @@ export class Gameplay {
   }
 
   private enemytouch(): boolean {
-    const enemyOnLeft: boolean =
-      this.bfs.isEnemy(
-        this.stage.getPlayer.Row,
-        this.stage.getPlayer.Col - 1,
-      ) &&
-      !this.bfs.isHole(
-        this.stage.getPlayer.Row + 1,
-        this.stage.getPlayer.Col - 1,
-      );
+    const enemyOnLeft: boolean = this.bfs.notGoingToFall(
+      this.stage.getPlayer.Row,
+      this.stage.getPlayer.Col - 1,
+    );
     if (enemyOnLeft) {
       return true;
     }
-    const enemyOnRight: boolean =
-      this.bfs.isEnemy(
-        this.stage.getPlayer.Row,
-        this.stage.getPlayer.Col + 1,
-      ) &&
-      !this.bfs.isHole(
-        this.stage.getPlayer.Row + 1,
-        this.stage.getPlayer.Col + 1,
-      );
+    const enemyOnRight: boolean = this.bfs.notGoingToFall(
+      this.stage.getPlayer.Row,
+      this.stage.getPlayer.Col + 1,
+    );
     if (enemyOnRight) {
       return true;
     }
@@ -369,11 +372,25 @@ export class Gameplay {
     return false;
   }
 
-  private WLadderRule() {
-    if (this.WLadderCondition()) {
-      this.stage.drawWLadder(this.stats.getStageNumber);
-      this.stats.WLadderOn();
-    }
+  private winAlert() {
+    this.stage.alertObjectdraw(Alert.Won);
+    this.stats.pauseNow();
+  }
+  private loseAlert() {
+    this.stage.alertObjectdraw(Alert.Lose);
+    this.stats.pauseNow();
+  }
+  public tutorialAlert() {
+    this.stage.alertObjectdraw(Alert.Tutorial);
+    this.stats.pauseNow();
+  }
+  public championAlert() {
+    this.stage.alertObjectdraw(Alert.Champion);
+    this.stats.pauseNow();
+  }
+  private gameOverAlert() {
+    this.stage.alertObjectdraw(Alert.GameOver);
+    this.stats.pauseNow();
   }
 
   private WLadderCondition() {
@@ -381,60 +398,83 @@ export class Gameplay {
     const noGold = this.stage.getGolds.length === 0;
     return noGold && !Wladder;
   }
-
-  private winingRule(): void {
-    if (this.WinningCondition()) {
-      alert("╰(*°▽°*)╯ YOU WON ╰(*°▽°*)╯");
-      this.Levelnext();
-    }
-  }
   private WinningCondition() {
     const toGod = this.stage.getPlayer.Row === -1;
     const Wladder = this.stats.getWLadder();
     return toGod && Wladder;
   }
+  private losingConditon() {
+    const enemyStuck =
+      this.stage.getMapElement(
+        this.stage.getPlayer.Row,
+        this.stage.getPlayer.Col,
+      ) instanceof Soil;
+    return enemyStuck || this.enemytouch();
+  }
 
+  private champtionCondition() {
+    if (this.stage.stageInitCondtion(this.stats.getStageNumber)) return false;
+    return true;
+  }
+  private WLadderRule() {
+    if (this.WLadderCondition()) {
+      this.stage.drawWLadder(this.stats.getStageNumber);
+      this.stats.WLadderOn();
+    }
+  }
+  private winingRule(): void {
+    if (this.WinningCondition()) {
+      this.winAlert();
+      this.Levelnext();
+    }
+  }
+  private championRule() {
+    if (this.champtionCondition()) {
+      this.championAlert();
+      this.LevelInit();
+    }
+  }
   private losingRule(): void {
     if (this.losingConditon()) {
       if (this.stats.lifeHas()) {
-        alert("O_O YOU DIED O_O");
+        this.loseAlert();
         this.Levelreset();
       } else {
-        alert(";_; GAME OVER ;_;");
+        this.gameOverAlert();
         this.LevelInit();
       }
     }
   }
-  private losingConditon() {
-    const enemyStuck = this.stage.getPlayer.Row >= 28;
-    return enemyStuck || this.enemytouch();
-  }
+
   public Rules() {
     this.losingRule();
     this.WLadderRule();
     this.winingRule();
+    this.championRule();
   }
+
   public updateFooter() {
-    if (this.stats.getTime % 10 === 0)
-      this.stage.getVisualRing.updateVisTime(this.stats.getTime / 10);
-    this.stage.getVisualRing.updateVislife(this.stats.getlife);
-    this.stage.getVisualRing.updateVisScore(this.stats.scoreGet);
+    this.stage.updateTime(this.stats.getTime);
+    this.stage.updateLife(this.stats.getlife);
+    this.stage.updateScore(this.stats.getScore);
+    this.stage.updateStageN(this.stats.getStageNumber);
   }
 
   private LevelInit(): void {
     this.stats.resetDefault();
     this.stage.reset();
-    this.stage.drawInitStage(this.stats.getStageNumber);
-    this.Rules();
+    this.stage.stageInit(this.stats.getStageNumber);
   }
+
   private Levelreset() {
     this.stats.sameLevel();
     this.stage.reset();
-    this.stage.drawInitStage(this.stats.getStageNumber);
+    this.stage.stageInit(this.stats.getStageNumber);
   }
+
   private Levelnext() {
     this.stats.nextLevel();
     this.stage.reset();
-    this.stage.drawInitStage(this.stats.getStageNumber);
+    this.stage.stageInit(this.stats.getStageNumber);
   }
 }

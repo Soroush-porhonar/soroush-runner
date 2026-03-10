@@ -15,13 +15,20 @@ export class Bfs {
   public isHole(r: number, c: number): boolean {
     return this.stage.getMapElement(r, c) instanceof Hole;
   }
+  public notGoingToFall(r: number, c: number) {
+    return (
+      (this.isEnemy(r, c) && !this.isHole(r + 1, c)) ||
+      (this.isEnemy(r, c) && this.isHole(r + 1, c) && this.isEnemy(r + 1, c))
+    );
+  }
 
   private isSolid(r: number, c: number): boolean {
     return (
       this.stage.getMapElement(r, c)?.Id === ObjectId.Soil ||
       this.stage.getMapElement(r - 1, c)?.Id === ObjectId.Bar ||
       this.stage.getMapElement(r, c)?.Id === ObjectId.Ladder ||
-      this.stage.getMapElement(r, c)?.Id === ObjectId.Hole
+      this.stage.getMapElement(r, c)?.Id === ObjectId.Hole ||
+      this.stage.getMapElement(r, c)?.Id === ObjectId.Conc
     );
   }
   private isLadder(r: number, c: number): boolean {

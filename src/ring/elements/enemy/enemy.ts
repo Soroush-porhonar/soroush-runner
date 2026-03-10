@@ -15,7 +15,7 @@ export class Enemy extends Element {
   createDom(): HTMLDivElement {
     const div = document.createElement("img");
     div.id = `${this.row}-${this.col}`;
-    div.src = "./src/ring/elements/enemy/enemy-standing.png";
+    div.src = "images/elements/enemy-standing.png";
     div.classList.add(this.id);
     return div;
   }

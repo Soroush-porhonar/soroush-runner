@@ -1,6 +1,6 @@
 import "./bar.css";
-import { Element, ObjectId } from "../../ring";
-
+import { ObjectId } from "../../ring";
+import { Element } from "../../ring";
 export class Bar extends Element {
   constructor(row: number, col: number) {
     super(row, col, ObjectId.Bar);

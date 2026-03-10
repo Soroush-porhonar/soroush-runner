@@ -2,8 +2,7 @@ import "./player.css";
 import { Element, ObjectId } from "../../ring";
 import type { Stage } from "../../../common/stage.ts";
 
-const START_IMAGE_URI: string =
-  "src/ring/elements/player/player-images/player-standing.png";
+const START_IMAGE_URI: string = "images/elements/player/player-standing.png";
 
 const enum PlayerState {
   Falling = "falling",
@@ -79,6 +78,7 @@ export class Player extends Element {
         this.state === PlayerState.Climbing ||
         this.state === PlayerState.Hanging) &&
       (leftboxId === ObjectId.Empty ||
+        leftboxId === ObjectId.Hole ||
         leftboxId === ObjectId.Ladder ||
         leftboxId === ObjectId.Bar)
     ) {
@@ -97,6 +97,7 @@ export class Player extends Element {
         this.state === PlayerState.Climbing ||
         this.state === PlayerState.Hanging) &&
       (leftboxId == ObjectId.Empty ||
+        leftboxId === ObjectId.Hole ||
         leftboxId == ObjectId.Ladder ||
         leftboxId == ObjectId.Bar)
     ) {
@@ -226,35 +227,35 @@ export class Player extends Element {
 
   private getPlayerImageUri(input: Input): string | undefined {
     if (this.state === PlayerState.Falling) {
-      return "src/ring/elements/player/player-images/player-hanging-still.png";
+      return "images/elements/player/player-hanging-still.png";
     }
     if (input === Input.Still) {
       if (this.state === PlayerState.Hanging) {
-        return "src/ring/elements/player/player-images/player-hanging-still.png";
+        return "images/elements/player/player-hanging-still.png";
       }
       if (this.state === PlayerState.Standing) {
-        return "src/ring/elements/player/player-images/player-standing.png";
+        return "images/elements/player/player-standing.png";
       }
       if (this.state === PlayerState.Climbing) {
-        return "src/ring/elements/player/player-images/player-climbing.png";
+        return "images/elements/player/player-climbing.png";
       }
     }
 
     if (input === Input.Left) {
       if (this.state === PlayerState.Hanging) {
-        return "src/ring/elements/player/player-images/player-hanging-left.png";
+        return "images/elements/player/player-hanging-left.png";
       }
       if (this.state === PlayerState.Standing) {
-        return "src/ring/elements/player/player-images/player-walk-left.png";
+        return "images/elements/player/player-walk-left.png";
       }
     }
 
     if (input === Input.Right) {
       if (this.state === PlayerState.Hanging) {
-        return "src/ring/elements/player/player-images/player-hanging-right.png";
+        return "images/elements/player/player-hanging-right.png";
       }
       if (this.state === PlayerState.Standing) {
-        return "src/ring/elements/player/player-images/player-walk-right.png";
+        return "images/elements/player/player-walk-right.png";
       }
     }
     return undefined;

@@ -1,11 +1,3 @@
-.ring {
-  position: relative;
-  height: 100vh;
-  background-color: #1a1a1a;
-  overflow: hidden;
-  margin: 0px;
-  padding: 0;
-}
 .stage {
   position: relative;
   height: 100vh;
@@ -35,23 +27,98 @@
   font-family: cursive;
   white-space: nowrap;
 }
-.menu {
+#alert {
   position: absolute;
   left: 0;
   top: 0;
   height: 100vh;
   width: 100vw;
-  background-color: rgba(26, 26, 26, 0.75);
   overflow: hidden;
   margin: 0px;
-  padding: 0;
+  padding: 1;
   font-weight: bold;
-  font-family: cursive;
-  color: white;
-  font-size: 500%;
-  text-transform: uppercase;
   z-index: 1;
+  font-family: cursive;
+  text-transform: uppercase;
   text-align: center;
   align-content: center;
-  visibility: hidden;
+  visibility: visible;
+}
+.pause {
+  background-color: rgba(26, 26, 26, 0.75);
+  font-size: 4em;
+  color: white;
+}
+
+.won {
+  background-color: rgba(50, 138, 12, 0.75);
+  font-size: 4em;
+  color: white;
+}
+.gameOver {
+  background-color: rgba(165, 0, 0, 0.75);
+  font-size: 4em;
+  color: black;
+}
+.lose {
+  background-color: rgba(25, 27, 24, 0.75);
+  font-size: 4em;
+  color: rgb(240, 24, 24);
+}
+.tutorial {
+  background-color: rgba(27, 28, 46, 0.75);
+  line-gap-override: initial;
+  line-height: 3em;
+  color: white;
+  font-size: 2em;
+}
+.champion {
+  background-color: rgba(168, 119, 20, 0.75);
+  font-size: 3em;
+  color: white;
+}
+.header {
+  position: absolute;
+  left: 0%;
+  top: 0%;
+  height: 7%;
+  width: 100vw;
+  background-color: transparent;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  overflow: hidden;
+  z-index: 0;
+}
+.headerSpan {
+  position: relative;
+  padding: 1%;
+  color: white;
+  text-transform: uppercase;
+  font-size: 1.5em;
+  font-weight: bold;
+  font-family: cursive;
+  white-space: nowrap;
+  align-items: center;
+  z-index: 1;
+}
+#music {
+  margin-right: 1%;
+  height: 55%;
+  width: 2%;
+  background-color: transparent;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border: 0;
+  fill: white;
+  z-index: 99;
+}
+.musicSVG {
+  position: absolute;
+  align-items: center;
+  height: 90%;
+  width: 90%;
+  z-index: 2;
 }

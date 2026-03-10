@@ -9,7 +9,7 @@ export class Gold extends Element {
   createDom(): HTMLDivElement {
     const div = document.createElement("img");
     div.id = `${this.row}-${this.col}`;
-    div.src = "./src/ring/elements/gold/gold.png";
+    div.src = "images/elements/gold.png";
     div.classList.add(this.id);
     return div;
   }
