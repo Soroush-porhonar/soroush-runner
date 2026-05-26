@@ -187,7 +187,7 @@ export class Player extends Element {
 
   public updLogState(stage: Stage): void {
     let current = this.getPlayerStateByPlayerPosition(stage);
-    if (current !== undefined) {
+    if (current !== null) {
       this.state = current;
       return;
     }
@@ -213,9 +213,7 @@ export class Player extends Element {
     return isFallingCondition ? PlayerState.Falling : PlayerState.Standing;
   }
 
-  private getPlayerStateByPlayerPosition(
-    stage: Stage,
-  ): PlayerState | undefined {
+  private getPlayerStateByPlayerPosition(stage: Stage): PlayerState | null {
     const playerMapId = stage.getMapElement(this.row, this.col)?.Id;
     switch (playerMapId) {
       case ObjectId.Ladder:
@@ -223,6 +221,7 @@ export class Player extends Element {
       case ObjectId.Bar:
         return PlayerState.Hanging;
     }
+    return null;
   }
 
   private getPlayerImageUri(input: Input): string | undefined {

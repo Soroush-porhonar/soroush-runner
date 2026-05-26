@@ -1,7 +1,7 @@
 import { Enemy } from "./enemy.ts";
 import type { Player } from "../player/player.ts";
 import { Empty, ObjectId } from "../../ring";
-import type { Stage } from "../../../common/stage.ts";
+import { Stage } from "../../../common/stage.ts";
 export type Pos = { row: number; col: number };
 type Node = Pos & { parent: Node | null };
 import { Hole } from "../hole/hole.ts";
@@ -116,8 +116,8 @@ export class Bfs {
     }
 
     const queue: Node[] = [];
-    const visited = Array.from({ length: this.stage.get_RingRow }, () =>
-      Array(this.stage.get_RingCol).fill(false),
+    const visited = Array.from({ length: Stage._Row }, () =>
+      Array(Stage._Col).fill(false),
     );
 
     queue.push({ ...start, parent: null });

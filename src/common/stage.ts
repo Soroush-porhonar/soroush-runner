@@ -36,14 +36,14 @@ interface StageList {
 }
 
 export class Stage {
+  public static readonly _Row: number = 30;
+  public static readonly _Col: number = 60;
   constructor(
-    protected _stageRow: number = 30,
-    protected _stageCol: number = 60,
     private enemies: Enemy[] = [],
     private golds: Gold[] = [],
     private player: Player = new Player(0, 0),
-    private ring: Ring = new Ring(_stageRow, _stageCol),
-    private visualRing: VisualRing = new VisualRing(_stageRow, _stageCol),
+    private ring: Ring = new Ring(Stage._Row, Stage._Col),
+    private visualRing: VisualRing = new VisualRing(Stage._Row, Stage._Col),
     private stageDict: StageDict = this.Dictionary,
   ) {}
 
@@ -84,14 +84,6 @@ export class Stage {
 
   public get getVisualRing() {
     return this.visualRing;
-  }
-
-  public get get_RingRow() {
-    return this._stageRow;
-  }
-
-  public get get_RingCol() {
-    return this._stageCol;
   }
 
   public ringObjectAdd() {
@@ -296,13 +288,13 @@ export class Stage {
   }
 
   public checkBorders(row: number, col: number): boolean {
-    if (row < 0 || row >= this._stageRow) {
+    if (row < 0 || row >= Stage._Row) {
       /*console.error(
         "Invalid Object request: " + row + " is more than " + this._RingRow,
       );*/
       return false;
     }
-    if (col < 0 || col >= this._stageCol) {
+    if (col < 0 || col >= Stage._Col) {
       /*console.error(
         "Invalid Object request: " + col + " is more than " + this._RingCol,
       );*/
@@ -345,7 +337,6 @@ export class Stage {
         Enemy: [
           { row: 25, col: 10, count: 1 } as blueprint,
           { row: 23, col: 55, count: 1 } as blueprint,
-          { row: 2, col: 40, count: 1 } as blueprint,
         ],
         Bar: [
           { row: 8, col: 11, count: 29 } as blueprint,
@@ -356,8 +347,6 @@ export class Stage {
           { row: 27, col: 40, count: 1 } as blueprint,
           { row: 19, col: 20, count: 1 } as blueprint,
           { row: 1, col: 6, count: 1 } as blueprint,
-          { row: 10, col: 22, count: 1 } as blueprint,
-          { row: 4, col: 54, count: 1 } as blueprint,
         ],
         Conc: [{ row: 29, col: 0, count: 60 } as blueprint],
         WLadder: [{ row: 0, col: 30, count: 5 } as blueprint],
@@ -407,7 +396,6 @@ export class Stage {
           { row: 25, col: 10, count: 1 } as blueprint,
           { row: 23, col: 55, count: 1 } as blueprint,
           { row: 2, col: 40, count: 1 } as blueprint,
-          { row: 1, col: 11, count: 1 } as blueprint,
         ],
         Bar: [
           { row: 11, col: 20, count: 13 } as blueprint,
@@ -422,8 +410,6 @@ export class Stage {
           { row: 1, col: 54, count: 1 } as blueprint,
           { row: 27, col: 53, count: 1 } as blueprint,
           { row: 3, col: 11, count: 1 } as blueprint,
-          { row: 3, col: 5, count: 1 } as blueprint,
-          { row: 9, col: 42, count: 1 } as blueprint,
         ],
         Conc: [{ row: 29, col: 0, count: 60 } as blueprint],
         WLadder: [{ row: 0, col: 25, count: 5 } as blueprint],
@@ -465,7 +451,6 @@ export class Stage {
           { row: 23, col: 55, count: 1 } as blueprint,
           { row: 1, col: 58, count: 1 } as blueprint,
           { row: 1, col: 11, count: 1 } as blueprint,
-          { row: 1, col: 17, count: 1 } as blueprint,
         ],
         Bar: [
           { row: 5, col: 8, count: 42 } as blueprint,
@@ -479,8 +464,6 @@ export class Stage {
           { row: 4, col: 13, count: 1 } as blueprint,
           { row: 26, col: 30, count: 1 } as blueprint,
           { row: 27, col: 11, count: 1 } as blueprint,
-          { row: 27, col: 55, count: 1 } as blueprint,
-          { row: 1, col: 13, count: 1 } as blueprint,
         ],
         Conc: [
           { row: 29, col: 0, count: 60 } as blueprint,
