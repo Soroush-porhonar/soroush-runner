@@ -2,7 +2,7 @@ import { Enemy } from "../ring/elements/enemy/enemy";
 import { Gold } from "../ring/elements/gold/gold";
 import { Hole } from "../ring/elements/hole/hole";
 import { Input } from "../ring/elements/player/player";
-import { GameState } from "./conditions.ts";
+import { GameState } from "./conditions";
 import { Soil } from "../ring/elements/soil/soil";
 import { Bfs, type Pos } from "../ring/elements/enemy/pathfinding";
 import { Stage } from "./stage";
