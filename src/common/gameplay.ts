@@ -153,11 +153,19 @@ export class Gameplay {
     return false;
   }
 
-  private enemyRespawn(enemy: Enemy) {
+  private enemyRespawn(enemy: Enemy): Gold | undefined {
+    const carriedGold = enemy.GoldSlot;
+    if (carriedGold !== undefined) {
+      this.getStage.eraseAndRemoveRing(carriedGold);
+      enemy.goldResetSlot();
+    }
+
     this.getStage.eraseAndRemoveRing(enemy);
     enemy.changePos(0, enemy.Col);
     this.getStage.drawAndAddRing(enemy);
     this.stats.ScoreAdd();
+
+    return carriedGold;
   }
 
   private enemyGetupHole(enemy: Enemy) {
@@ -264,19 +272,23 @@ export class Gameplay {
   }
 
   private playerDigRight() {
-    if (this.stage.getPlayer.digRightCondition(this.stage))
+    if (this.stage.getPlayer.digRightCondition(this.stage)) {
       this.holeHandle(
         this.stage.getPlayer.Row + 1,
         this.stage.getPlayer.Col + 1,
       );
+      this.overWriteLastMove(Input.Still);
+    }
   }
 
   private playerDigLeft() {
-    if (this.stage.getPlayer.digLeftCondition(this.stage))
+    if (this.stage.getPlayer.digLeftCondition(this.stage)) {
       this.holeHandle(
         this.stage.getPlayer.Row + 1,
         this.stage.getPlayer.Col - 1,
       );
+      this.overWriteLastMove(Input.Still);
+    }
   }
 
   private playerGoStill() {
@@ -288,15 +300,28 @@ export class Gameplay {
   public holeHandle(row: number, col: number) {
     this.soilTohole(row, col);
     setTimeout(() => {
-      const hole = this.stage.getMapElement(row, col);
-      if (hole instanceof Hole) {
-        const enemy = this.stage.getRingElement(row, col);
-        if (enemy instanceof Enemy) {
-          this.enemyRespawn(enemy);
-        }
-        this.holeToSoil(row, col);
-      }
+      void this.repairHole(row, col);
     }, 5000);
+  }
+
+  private async repairHole(row: number, col: number): Promise<void> {
+    const hole = this.stage.getMapElement(row, col);
+    if (hole instanceof Hole) {
+      const enemy = this.stage.getRingElement(row, col);
+      let droppedGold: Gold | undefined;
+      if (enemy instanceof Enemy) {
+        droppedGold = this.enemyRespawn(enemy);
+      }
+      await this.holeToSoil(row, col);
+      if (droppedGold !== undefined) {
+        this.dropGold(droppedGold, row - 1, col);
+      }
+    }
+  }
+
+  private dropGold(gold: Gold, row: number, col: number): void {
+    gold.changePos(row, col);
+    this.stage.drawAndAddRing(gold);
   }
 
   private soilTohole(row: number, col: number) {
