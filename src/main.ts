@@ -20,6 +20,9 @@ class Game {
   }
 
   private eventListenerAdds() {
+    document.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+    });
     window.addEventListener("load", () => document.body.focus());
     document.body.addEventListener("keydown", (event) => {
       this.body_keydown(event);

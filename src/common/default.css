@@ -268,4 +268,11 @@ table {
     width: clamp(28px, 6vmin, 46px);
     height: clamp(28px, 6vmin, 46px);
   }
+  body,
+  .touch-button:active {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
+  }
 }
