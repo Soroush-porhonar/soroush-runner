@@ -16,7 +16,7 @@ This project was developed to strengthen my understanding of front-end architect
 ## Live Demo
 
 🎮 **Play the game:**
-[**https://your-demo-link.com**](https://soroush-porhonar.github.io/soroush-runner/)
+[**Soroush Runner**](https://soroush-porhonar.github.io/soroush-runner/)
 
 ## Highlights
 
