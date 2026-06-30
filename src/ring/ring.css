@@ -1,6 +1,16 @@
+.ring {
+  width: 100vw;
+  height: 100dvh;
+  min-height: 100vh;
+  overflow: hidden;
+  background-color: #1a1a1a;
+}
+
 .stage {
   position: relative;
-  height: 100vh;
+  width: 100vw;
+  height: 100dvh;
+  min-height: 100vh;
   background-color: #1a1a1a;
   overflow: hidden;
   margin: 0px;
@@ -8,117 +18,146 @@
 }
 .footer {
   position: absolute;
-  left: 0%;
-  bottom: 0%;
-  height: 7%;
+  left: 0;
+  bottom: 0;
+  min-height: clamp(34px, 7dvh, 64px);
   width: 100vw;
+  padding: 0 max(8px, env(safe-area-inset-right))
+    max(4px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
   background-color: transparent;
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  z-index: 1;
+  gap: clamp(4px, 2vw, 20px);
+  pointer-events: none;
+  z-index: 2;
 }
 .footerSpan {
-  padding: 10px;
+  padding: clamp(3px, 1vmin, 10px);
   color: white;
   text-transform: uppercase;
-  font-size: 150%;
+  font-size: clamp(0.72rem, 2.2vmin, 1.5rem);
   font-weight: bold;
   font-family: cursive;
   white-space: nowrap;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
 }
 #alert {
   position: absolute;
   left: 0;
   top: 0;
-  height: 100vh;
+  height: 100dvh;
+  min-height: 100vh;
   width: 100vw;
   overflow: hidden;
   margin: 0px;
-  padding: 1;
+  padding: clamp(12px, 4vmin, 48px);
   font-weight: bold;
-  z-index: 1;
+  z-index: 20;
   font-family: cursive;
   text-transform: uppercase;
   text-align: center;
   align-content: center;
   visibility: visible;
+  line-height: 1.35;
+  text-wrap: balance;
 }
 .pause {
   background-color: rgba(26, 26, 26, 0.75);
-  font-size: 4em;
+  font-size: clamp(1.8rem, 7vmin, 4rem);
   color: white;
 }
 
 .won {
   background-color: rgba(50, 138, 12, 0.75);
-  font-size: 4em;
+  font-size: clamp(1.6rem, 6.5vmin, 4rem);
   color: white;
 }
 .gameOver {
   background-color: rgba(165, 0, 0, 0.75);
-  font-size: 4em;
+  font-size: clamp(1.8rem, 7vmin, 4rem);
   color: black;
 }
 .lose {
   background-color: rgba(25, 27, 24, 0.75);
-  font-size: 4em;
+  font-size: clamp(1.6rem, 6.5vmin, 4rem);
   color: rgb(240, 24, 24);
 }
 .tutorial {
   background-color: rgba(27, 28, 46, 0.75);
   line-gap-override: initial;
-  line-height: 3em;
+  line-height: 1.5;
   color: white;
-  font-size: 2em;
+  font-size: clamp(0.95rem, 3.6vmin, 2rem);
 }
 .champion {
   background-color: rgba(168, 119, 20, 0.75);
-  font-size: 3em;
+  font-size: clamp(1.4rem, 5.5vmin, 3rem);
   color: white;
 }
 .header {
   position: absolute;
-  left: 0%;
-  top: 0%;
-  height: 7%;
+  left: 0;
+  top: 0;
+  min-height: clamp(34px, 7dvh, 64px);
   width: 100vw;
+  padding: max(4px, env(safe-area-inset-top))
+    max(8px, env(safe-area-inset-right)) 0 max(8px, env(safe-area-inset-left));
   background-color: transparent;
   display: flex;
   justify-content: space-between;
   align-items: center;
   overflow: hidden;
-  z-index: 0;
+  pointer-events: none;
+  z-index: 2;
 }
 .headerSpan {
   position: relative;
-  padding: 1%;
+  padding: clamp(3px, 1vmin, 10px);
   color: white;
   text-transform: uppercase;
-  font-size: 1.5em;
+  font-size: clamp(0.78rem, 2.4vmin, 1.5rem);
   font-weight: bold;
   font-family: cursive;
   white-space: nowrap;
   align-items: center;
-  z-index: 1;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+  z-index: 2;
 }
 #music {
-  margin-right: 1%;
-  height: 55%;
-  width: 2%;
-  background-color: transparent;
+  width: clamp(28px, 6vmin, 46px);
+  height: clamp(28px, 6vmin, 46px);
+  min-width: clamp(28px, 6vmin, 46px);
+  padding: clamp(4px, 1vmin, 8px);
+  background-color: rgba(255, 255, 255, 0.08);
   cursor: pointer;
   display: flex;
   justify-content: space-around;
   align-items: center;
-  border: 0;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 999px;
   fill: white;
+  pointer-events: auto;
   z-index: 99;
 }
 .musicSVG {
-  position: absolute;
+  position: relative;
   align-items: center;
-  height: 90%;
-  width: 90%;
+  height: 100%;
+  width: 100%;
   z-index: 2;
+}
+
+@media (max-width: 700px) {
+  .footer {
+    justify-content: center;
+  }
+
+  .footerSpan {
+    font-size: clamp(0.66rem, 2.8vw, 1rem);
+  }
+
+  .headerSpan {
+    font-size: clamp(0.7rem, 3vw, 1rem);
+  }
 }
