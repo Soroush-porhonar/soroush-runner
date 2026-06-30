@@ -3,6 +3,8 @@ import { Song } from "./audio/audio";
 import { Input } from "./ring/elements/player/player";
 
 class Game {
+  private touchMoveInput: Input = Input.Still;
+
   constructor(
     private gameplay: Gameplay = new Gameplay(),
     private song: Song = new Song(),
@@ -31,6 +33,7 @@ class Game {
     window.addEventListener("resize", () => {
       this.checkRotate();
     });
+    this.createTouchControls();
   }
 
   private musicInit() {
@@ -48,6 +51,121 @@ class Game {
 
   private intervalStart() {
     setInterval(() => this.repeat(), 100);
+  }
+
+  private createTouchControls(): void {
+    if (document.getElementById("mobile-controls")) return;
+
+    const controls = document.createElement("div");
+    controls.id = "mobile-controls";
+
+    const dpad = document.createElement("div");
+    dpad.className = "touch-dpad";
+    dpad.append(
+      this.createTouchButton("^", "Move up", Input.Up, "move up"),
+      this.createTouchButton("<", "Move left", Input.Left, "move left"),
+      this.createTouchButton(">", "Move right", Input.Right, "move right"),
+      this.createTouchButton("v", "Move down", Input.Down, "move down"),
+    );
+
+    const actions = document.createElement("div");
+    actions.className = "touch-actions";
+    actions.append(
+      this.createTouchButton("Q", "Dig left", Input.DigLeft, "action"),
+      this.createTouchButton("E", "Dig right", Input.DigRight, "action"),
+    );
+
+    const pause = document.createElement("button");
+    pause.type = "button";
+    pause.textContent = "II";
+    pause.ariaLabel = "Pause game";
+    pause.className = "touch-button touch-pause";
+    pause.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      this.musicInit();
+      this.touchMoveInput = Input.Still;
+      this.gameplay.overWriteLastMove(Input.Still);
+      this.EscButtonAction();
+      pause.classList.add("pressed");
+    });
+    pause.addEventListener("pointerup", (event) => {
+      event.preventDefault();
+      pause.classList.remove("pressed");
+    });
+    pause.addEventListener("pointercancel", (event) => {
+      event.preventDefault();
+      pause.classList.remove("pressed");
+    });
+
+    controls.append(dpad, actions, pause);
+    document.getElementById("app")?.append(controls);
+  }
+
+  private createTouchButton(
+    label: string,
+    ariaLabel: string,
+    input: Input,
+    className: string,
+  ): HTMLButtonElement {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = label;
+    button.ariaLabel = ariaLabel;
+    button.className = `touch-button ${className}`;
+
+    button.addEventListener("pointerdown", (event) => {
+      this.touchInputStart(event, button, input);
+    });
+    button.addEventListener("pointerup", (event) => {
+      this.touchInputEnd(event, button, input);
+    });
+    button.addEventListener("pointercancel", (event) => {
+      this.touchInputEnd(event, button, input);
+    });
+    button.addEventListener("lostpointercapture", (event) => {
+      this.touchInputEnd(event, button, input);
+    });
+
+    return button;
+  }
+
+  private touchInputStart(
+    event: PointerEvent,
+    button: HTMLButtonElement,
+    input: Input,
+  ): void {
+    event.preventDefault();
+    this.musicInit();
+    this.gameplay.alertSkip();
+    button.setPointerCapture(event.pointerId);
+    button.classList.add("pressed");
+
+    if (input === Input.DigLeft || input === Input.DigRight) {
+      this.gameplay.overWriteLastMove(input);
+      window.setTimeout(() => {
+        if (this.gameplay.getLastMove === input) {
+          this.gameplay.overWriteLastMove(this.touchMoveInput);
+        }
+      }, 250);
+      return;
+    }
+
+    this.touchMoveInput = input;
+    this.gameplay.overWriteLastMove(input);
+  }
+
+  private touchInputEnd(
+    event: PointerEvent,
+    button: HTMLButtonElement,
+    input: Input,
+  ): void {
+    event.preventDefault();
+    button.classList.remove("pressed");
+
+    if (this.touchMoveInput === input) {
+      this.touchMoveInput = Input.Still;
+      this.gameplay.overWriteLastMove(Input.Still);
+    }
   }
 
   private EscButtonAction() {

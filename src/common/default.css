@@ -109,6 +109,21 @@ section {
 body {
   line-height: 1;
 }
+
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
+}
+
+body {
+  background: #1a1a1a;
+}
+ol,
 ol,
 ul {
   list-style: none;
@@ -132,52 +147,125 @@ table {
 #mobile-controls {
   position: fixed;
   inset: 0;
+  display: none;
   pointer-events: none;
-  z-index: 10000;
+  z-index: 30;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-#mobile-controls button {
+#mobile-controls .touch-button {
   pointer-events: auto;
-  width: 35px;
-  height: 35px;
-  background: rgba(255, 255, 255, 0.25);
-  border: 2px solid rgba(255, 255, 255, 0.45);
+  width: clamp(44px, 11vmin, 72px);
+  height: clamp(44px, 11vmin, 72px);
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    0 10px 24px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   color: white;
-  font-size: 20px;
-  border-radius: 6px;
+  cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(1rem, 4.5vmin, 1.7rem);
+  font-weight: 800;
+  line-height: 1;
+  opacity: 0.56;
   touch-action: none;
 }
 
-.dpad {
+#mobile-controls .touch-button.pressed,
+#mobile-controls .touch-button:active {
+  background: rgba(255, 255, 255, 0.24);
+  border-color: rgba(255, 255, 255, 0.62);
+  opacity: 0.9;
+  transform: scale(0.96);
+}
+
+.touch-dpad {
   position: absolute;
-  bottom: 28px;
-  left: 28px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+  left: max(14px, env(safe-area-inset-left));
+  bottom: max(14px, env(safe-area-inset-bottom));
+  display: grid;
+  grid-template-columns: repeat(3, clamp(44px, 11vmin, 72px));
+  grid-template-rows: repeat(3, clamp(44px, 11vmin, 72px));
+  gap: clamp(4px, 1.3vmin, 10px);
 }
 
-.row {
-  display: flex;
-  justify-content: center;
-  gap: 2px;
+.touch-dpad .up {
+  grid-column: 2;
+  grid-row: 1;
 }
 
-.spacer {
-  width: 46px;
+.touch-dpad .left {
+  grid-column: 1;
+  grid-row: 2;
 }
 
-.actions {
+.touch-dpad .right {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.touch-dpad .down {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+.touch-actions {
   position: absolute;
-  bottom: 42px;
-  right: 28px;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(22px, calc(env(safe-area-inset-bottom) + 2vmin));
   display: flex;
-  gap: 12px;
+  gap: clamp(12px, 3vmin, 24px);
 }
 
-.actions button {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  font-weight: bold;
+.touch-actions .touch-button {
+  width: clamp(58px, 14vmin, 92px);
+  height: clamp(58px, 14vmin, 92px);
+  font-size: clamp(1.1rem, 4.8vmin, 2rem);
+}
+.touch-pause {
+  position: absolute;
+  top: max(4px, env(safe-area-inset-top));
+  right: calc(
+    max(8px, env(safe-area-inset-right)) + clamp(28px, 6vmin, 46px) +
+      clamp(6px, 1.4vmin, 12px)
+  );
+  width: clamp(28px, 6vmin, 46px);
+  height: clamp(28px, 6vmin, 46px);
+  min-width: clamp(28px, 6vmin, 46px);
+  padding: clamp(4px, 1vmin, 8px);
+  font-size: clamp(0.7rem, 2.2vmin, 1.1rem);
+  letter-spacing: 0;
+}
+
+@media (pointer: coarse), (max-width: 900px) {
+  #mobile-controls {
+    display: block;
+  }
+}
+
+@media (max-height: 430px) and (orientation: landscape) {
+  #mobile-controls .touch-button {
+    width: clamp(40px, 10vmin, 58px);
+    height: clamp(40px, 10vmin, 58px);
+  }
+
+  .touch-dpad {
+    grid-template-columns: repeat(3, clamp(40px, 10vmin, 58px));
+    grid-template-rows: repeat(3, clamp(40px, 10vmin, 58px));
+  }
+
+  .touch-actions .touch-button {
+    width: clamp(50px, 12vmin, 72px);
+    height: clamp(50px, 12vmin, 72px);
+  }
+
+  .touch-pause {
+    width: clamp(28px, 6vmin, 46px);
+    height: clamp(28px, 6vmin, 46px);
+  }
 }
