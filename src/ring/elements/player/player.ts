@@ -217,10 +217,13 @@ export class Player extends Element {
     const playerMapId = stage.getMapElement(this.row, this.col)?.Id;
     switch (playerMapId) {
       case ObjectId.Ladder:
+        //console.log("PlayerState.Climbing");
         return PlayerState.Climbing;
       case ObjectId.Bar:
+        //console.log("PlayerState.Hanging");
         return PlayerState.Hanging;
     }
+
     return null;
   }
 

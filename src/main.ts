@@ -208,12 +208,12 @@ class Game {
         break;
       case "KeyE":
       case "KeyK":
-        if (e.repeat) return;
+        //if (e.repeat) return;
         this.gameplay.overWriteLastMove(Input.DigRight);
         break;
       case "KeyQ":
       case "KeyJ":
-        if (e.repeat) return;
+        //if (e.repeat) return;
         this.gameplay.overWriteLastMove(Input.DigLeft);
         break;
       case "KeyM":
@@ -243,12 +243,12 @@ class Game {
       case "KeyS":
         this.gameplay.overWriteLastMove(Input.Still);
         break;
-      case "KeyE":
-      case "KeyK":
-      case "KeyQ":
-      case "KeyJ":
-        this.gameplay.overWriteLastMove(Input.Still);
-        break;
+      // case "KeyE":
+      // case "KeyK":
+      // case "KeyQ":
+      // case "KeyJ":
+      //   this.gameplay.overWriteLastMove(Input.Still);
+      //   break;
     }
   }
 
