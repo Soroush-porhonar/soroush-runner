@@ -14,6 +14,7 @@ export class Gameplay {
     private stage: Stage = new Stage(),
     private bfs: Bfs = new Bfs(stage),
     private lastMove: Input = Input.Still,
+    private lastLastMove: Input = this.lastMove,
   ) {
     this.LevelInit();
   }
@@ -39,8 +40,20 @@ export class Gameplay {
       this.getState.pauseNow();
     }
   }
+  public overWriteLastLastMove() {
+    const lastMove = this.getLastMove;
+    if (
+      lastMove === Input.Right ||
+      lastMove === Input.Left ||
+      lastMove === Input.Still
+    )
+      this.lastLastMove = lastMove;
+  }
   public overWriteLastMove(keyCode: Input) {
+    this.overWriteLastLastMove();
     this.lastMove = keyCode;
+    console.log(this.lastLastMove);
+    console.log(this.lastMove);
   }
   public get getLastMove() {
     return this.lastMove;
@@ -277,7 +290,7 @@ export class Gameplay {
         this.stage.getPlayer.Row + 1,
         this.stage.getPlayer.Col + 1,
       );
-      this.overWriteLastMove(Input.Still);
+      this.overWriteLastMove(this.lastLastMove);
     }
   }
 
@@ -287,7 +300,7 @@ export class Gameplay {
         this.stage.getPlayer.Row + 1,
         this.stage.getPlayer.Col - 1,
       );
-      this.overWriteLastMove(Input.Still);
+      this.overWriteLastMove(this.lastLastMove);
     }
   }
 
